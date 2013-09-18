@@ -1,0 +1,156 @@
+	
+
+<!DOCTYPE html>
+<hmtl>
+    <head>
+    </head>
+    <style type="text/css">
+    ul {
+        list-style-type: none;
+    }
+
+    li {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        background-color: orange;
+        border: 1px black;
+        text-align: center;
+        line-height: 100px;
+        top: 10px;
+    }
+
+    li p .top {
+        position: relative;
+        top: -10px;
+    }
+
+    </style>
+    <body>
+        <ul id="top row">
+            <li id = "1"><p class = "top">X</p></li>
+            <li id = "2">X</li>
+            <li id = "3">X</li>
+            <li id = "4">X</li>
+            <li id = "5">X</li>
+            <li id = "6">X</li>
+        </ul>  
+        <section id = "results"></section>
+        <script>
+
+        // global variable containing number of cards actually showing 
+        var cardsUp = 0;
+
+        // flipCard every time you click on a card
+        function flipCard(card) {
+            // if the card has been cleared, nothing happens
+            if(!card.cleared && card.faceDown) {
+                card.innerHTML = card.hiddenValue;
+                card.faceDown = false;
+                cardsUp++;
+            } else if (!card.cleared && !card.faceDown) {
+                card.innerHTML = 'X';
+                card.faceDown = true;
+            }
+        }
+
+        // turnWrongCardsBackOver will run within the checkCards function
+        function turnWrongCardsBackOver (card1, card2) {
+            flipCard(card1);
+            flipCard(card2);
+            console.log("Turned back over the wrong cards");
+        }
+
+        // checkCards function will run every time the mouse is clicked anywhere
+        function checkCards () {
+            // create empty variables and assign arbitrary values
+            var card1Value = 'Z'; // assign arbitrary value
+            var card2Value = 'Z'; // assign arbitrary value
+
+            // create values to remember the two flipped-up cards
+            var card1Number;
+            var card2Number;
+
+            console.log("cards up: " + cardsUp);
+
+            // if two cards are showing
+            if (cardsUp == 2) {
+                // loop through the cards, store two face-up card values & index numbers
+                for (var i=0; i < myList.length; i++){
+                    if (!myList[i].faceDown && card1Value == 'Z' && !myList[i].cleared) {
+                        card1Number = i;
+                        card1Value = myList[i].hiddenValue;
+                    } else if (!myList[i].faceDown && card1Value != 'Z' && !myList[i].cleared){
+                        card2Number = i;
+                        card2Value = myList[i].hiddenValue;
+                    }
+                }
+                console.log("card 1, " + card1Number + ": " + card1Value + " card 2, " + card2Number + ": " + card2Value);
+                // if the cards don't match, say so and turn them back over
+                if (card1Value != card2Value) {
+                    document.getElementById('results').innerHTML = "Try again!";
+
+                    // flip the cards back over after 2 seconds
+                    setTimeout(function(){turnWrongCardsBackOver(myList[card1Number], myList[card2Number])}, 2000);
+                    cardsUp = 0;
+                }
+
+                // but if they do, mark them both as cleared and turn them green
+                else {
+                    document.getElementById('results').innerHTML = "Match!";
+                    for (var i=0; i < myList.length; i++){
+                        if(!myList[i].faceDown) {
+                            myList[i].cleared = true;
+                            myList[i].style.background = 'green';
+                        }
+                    }
+                }
+
+                // reset everything for next check
+                cardsUp = 0;
+                card1Value = 'Z';
+                card2Value = 'Z';
+
+
+            }
+        }
+
+
+        var myList = document.getElementsByTagName("li");
+
+        // console.log(myList);
+        // assign values to all the cards
+        myList[0].hiddenValue = 'B';
+        myList[1].hiddenValue = 'C';
+        myList[2].hiddenValue = 'C';
+        myList[3].hiddenValue = 'A';
+        myList[4].hiddenValue = 'B';
+        myList[5].hiddenValue = 'A';
+
+
+        for (var i = 0; i<myList.length; i++){
+            myList[i].faceDown = true;
+            myList[i].cleared = false;
+
+//             myList[i].addEventListener('mouseover', function(){
+//                 this.style.background = '#fff';
+//             })
+// 
+//             myList[i].addEventListener('mouseout', function(){
+//                 this.style.background = 'orange';
+//             })
+
+            myList[i].addEventListener('click', function(){
+                flipCard(this);
+            }, false);
+
+        }
+
+        // add the checkCards event to happen on every mouse click, no matter where
+        document.addEventListener('click', checkCards, false);
+
+        </script>
+
+    </body>
+    </html>
+
