@@ -2,7 +2,7 @@ body {
 	font-size:100%;
 	/*background-image: url("../img/1024x768.png");*/
 	background-repeat: no-repeat;
-	transition: background-image 2s; /* not supported? http://www.w3.org/TR/css3-transitions/#animation-of-property-types- */
+	transition: background-image 0.5s; /* not supported? http://www.w3.org/TR/css3-transitions/#animation-of-property-types- */
 }
 
 nav {
@@ -10,7 +10,40 @@ nav {
 	background-color: orange;
 }
 
+div {
+	display: inline-block;
+}
 
-@media only screen and (min-width: 350px) {body {background-image: url("../img/640x480.png");}}
-@media only screen and (min-width: 800px) {body {background-image: url("../img/800x600.png");}}
-@media only screen and (min-width: 1024px) {body {background-image: url("../img/1024x768.png");}}
+.sidebar {
+	border-style: solid;
+	border-color: black;
+	width: 25%;
+	height: 100%;
+	/*display: inline-block;*/
+}
+
+#leftPic {
+	float: left;
+	width: 25%;
+}
+
+#storyElements {
+
+	/*float: left;*/
+	border-style: solid;
+	width: 45%;
+	/*display: inline-block;*/
+}
+
+#rightPic {
+	float: right;
+	/*width: 25%;*/
+}
+
+
+
+
+
+@media only screen and (min-width: 350px) {.sidebar {background-image: url("../img/640x480.png");}}
+@media only screen and (min-width: 800px) {.sidebar {background-image: url("../img/800x600.png");}}
+@media only screen and (min-width: 1024px) {.sidebar {background-image: url("../img/1024x768.png");}}
