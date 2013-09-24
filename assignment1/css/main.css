@@ -2,29 +2,49 @@ body {
 	font-size:100%;
 	position: relative;
 	height: 100%;
-	/*background-image: url("../img/1024x768.png");*/
 	background-repeat: no-repeat;
 	transition: background-image 0.5s; /* not supported? http://www.w3.org/TR/css3-transitions/#animation-of-property-types- */
+	transition: color 0.5s;
 	border-width: 0px;
 }
 
-/*nav {
-	display:inline-block;
-	background-color: orange;
-}
-*/
 div {
 	display: inline-block;
 	height: 100%;
 }
 
+img {
+	max-width: 80%;
+}
+
+#title {
+	font-family: 'Ruthie', cursive;
+	font-size: 350%;
+	width: 100%;
+	text-align: center;
+}
+
+#intro-canvas {
+	width: 100%;
+}
+
+#intro-image {
+	width: 100%;
+	text-align: center;
+}
+
+#welcome-text {
+	font-family: 'Ruthie', cursive;
+	font-size: 150%;
+	text-align: center;
+	width: 100%;
+}
 #mainContainer {
 	position: relative;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: justify;
-
-	/*text-justify: distribute-all-lines;*/
+	width: 100%;
 }
 
 #mainContainer > div {
@@ -32,21 +52,15 @@ div {
 }
 
 .sidebar {
-	/*border-style: solid;*/
-	border-color: black;
-	width: 25%;
-	height: 100px;
-	/*display: inline-block;*/
+	width: 30%;
+	height: 10px;
 }
 
 #storyElements {
 	position: relative;
 	margin-left: auto;
 	margin-right: auto;
-	/*float: left;*/
-	/*border-style: solid;*/
-	width: 49%;
-	/*display: inline-block;*/
+	width: 39%;
 }
 
 #story {
@@ -56,27 +70,24 @@ div {
 
 #choiceBox {
 	position: relative;
+	border-width: 0px;
 	width: 100%;
-	/*display: inline-block;*/
-	/*text-align: center;*/
 	margin: 0 auto;
-/*	margin-left: auto;
-	margin-right: auto;
-*/
 	clear: both;
 }
 
 .choices {
-/*	margin-left: auto;
-	margin-right: auto;
-	display: inline-block;
-	border-style: solid;*/
 	position: relative;
 	margin: 0px;
 	padding: 10px;
 	text-align: center;
 	width: 45%;
 	padding: 2px;
+}
+
+.choices:hover {
+	cursor: pointer;
+	color: teal;
 }
 
 #choice1 {
@@ -89,28 +100,24 @@ div {
 
 #leftPic {
 	float: left;
-	width: 25%;
 }
 
 #rightPic {
 	float: right;
-	/*width: 25%;*/
 }
 
-/*.stretch {
-	display: inline-block;
-	width: 100%;
-	font-size: 0;
-	line-height: 0;
-}
-*/
 
 #goBack {
 	width: 100%;
-	margin-top: 100px;
+	margin-top: 30px;
 	text-align: center;
 	/*position: absolute;*/
 	bottom: 10px;
+}
+
+#goBack:hover {
+	cursor: pointer;
+	color: teal;
 }
 
 

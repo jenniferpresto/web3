@@ -1,8 +1,18 @@
 /* where are we in the story?*/
-var page = 1;
+var page = 0;
+$('#story-canvas').hide();
+$('#intro-canvas').show();
 
-var goBack = document.getElementById("goBack");
+var introPicture = document.getElementById("intro-image");
 var mainStory = document.getElementById("story");
+var goBack = document.getElementById("goBack");
+
+// start with a click on the main picture
+introPicture.onclick = function() {
+	page = 1;
+	startStory();
+	console.log("is this on?");
+}
 
 // add clickable way to go back to the beginning
 goBack.onclick = function(){
@@ -169,16 +179,25 @@ pages[19] = new pageContent(
 // show the first page to start
 displayPage(page);
 
-console.log(pages.length);
+function startStory() {
+	console.log("calling startStory");
+   $('#intro-canvas').hide();
+   $('#story-canvas').show();
+   page = 1;
+	displayPage(1);
+	console.log("calling displayPage");
+}
 
 function displayPage(currentPage) {
 	for (var i = 0; i < pages.length; i++) {
 		if (i + 1 == currentPage) {
 			mainStory.innerHTML = pages[i].story;
+			console.log("innerHTML");
 			choices[0].innerHTML = pages[i].choice1;
 			choices[1].innerHTML = pages[i].choice2;
 		}
 	}
+	console.log("on page: " + page);
 }
 
 // function to go to the right page

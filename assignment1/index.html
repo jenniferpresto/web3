@@ -1,33 +1,44 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link href='http://fonts.googleapis.com/css?family=Ruthie' rel='stylesheet' type='text/css'>
 		<link rel = "stylesheet" href = "css/normalize.css">
 		<link rel = "stylesheet" href = "css/main.css">
-		<title>Assignment 1</title>
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+
+		<title>Story Time</title>
 	</head>
 	<body>
-<!-- 		<header>
-			<nav id = "goBack">
-			</nav>
+		<header>
+			<div id = "title">Welcome to Story Time</div>
 		</header>
- -->
- 		<div id = "mainContainer">
-			<div id = "leftPic" class = "sidebar">picture here</div>
-			<div id = "storyElements">
-				<div id = "story">
-					This is where the choose-your-own-adventure story will go.
-				</div>
-				<div id = "choiceBox">
-					<section id = "choice1" class = "choices">first Choice</section>
-					<section id = "choice2" class = "choices">second choice</section>
-				</div>
-				<div id = "goBack">There is no cheating here, like in the old days. Click here to start over.</div>
-			</div><!-- end of storyElements container -->
-			
-		<div id="rightPic" class = "sidebar">another picture here</div>
-		<!-- <span class = "stretch"></span> -->
 
-		</div> <!-- end of main container -->
+		<div id = "intro-canvas">
+			<div id = "intro-image"><img src = "img/introPic.png" alt="Happy to read you a story."></div>
+			<div id = "welcome-text">We&rsquo;d love to read you a story. Please click us anywhere.<br>If you find we&rsquo;re taking up too much room on your screen, we&rsquo;re happy to squeeze in a little.</div>
+		</div>
+
+		<div id = "story-canvas">
+	 		<div id = "mainContainer">
+				<div id = "leftPic" class = "sidebar"></div>
+				<div id = "storyElements">
+					<div id = "story">
+						This is where the choose-your-own-adventure story will go.
+					</div>
+					<div id = "choiceBox">
+						<section id = "choice1" class = "choices">first Choice</section>
+						<section id = "choice2" class = "choices">second choice</section>
+					</div>
+				</div><!-- end of storyElements container -->
+
+				<div id="rightPic" class = "sidebar"></div>
+
+			</div> <!-- end of main container -->
+			<div id = "goBack">There is no cheating here, like in the old days.<br>Click here to start over.</div>
+		</div> <!-- end of story canvas -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 		<script src = "js/main.js"></script>
 	</body>
 </html>
