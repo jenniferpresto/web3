@@ -185,6 +185,7 @@ function startStory() {
 }
 
 function displayPage(currentPage) {
+	console.log("current page is " + currentPage);
 	for (var i = 0; i < pages.length; i++) {
 		if (i + 1 == currentPage) {
 			mainStory.innerHTML = pages[i].story;
@@ -346,4 +347,4 @@ function turnPage(pageNumber, choiceValue) {
 	}
 
 	// skip pages 18, 19, and 20; all endings
-}
+};
