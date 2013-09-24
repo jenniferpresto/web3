@@ -90,7 +90,7 @@ pages[5] = new pageContent(
 pages[6] = new pageContent(
 	"You learn about the man who compiled the famous Dictionary of the English Language, published in 1755. You learn about the sexual proclivities of his biographer, James Boswell. You watch a video, which appears to have been made around 1995, showing Johnson and Boswell conversing about Johnson&rsquo;s life. The video is worth the price of admission.",
 	"You&rsquo;ve seen enough for today and you want to head for the closest pub.",
-	"Uou&rsquo;re feeling thirsty."
+	"You&rsquo;re feeling thirsty."
 	);
 
 pages[7] = new pageContent(

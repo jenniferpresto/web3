@@ -3,8 +3,6 @@ body {
 	position: relative;
 	height: 100%;
 	background-repeat: no-repeat;
-	transition: background-image 0.5s; /* not supported? http://www.w3.org/TR/css3-transitions/#animation-of-property-types- */
-	transition: color 0.5s;
 	border-width: 0px;
 }
 
@@ -33,6 +31,10 @@ img {
 	text-align: center;
 }
 
+#story-canvas {
+	font-family: 'PT Serif', serif;
+}
+
 #welcome-text {
 	font-family: 'Ruthie', cursive;
 	font-size: 150%;
@@ -52,6 +54,9 @@ img {
 }
 
 .sidebar {
+	transition: background-image 1s;
+	background-size: 99%;
+	background-repeat: no-repeat;
 	width: 30%;
 	height: 10px;
 }
@@ -83,6 +88,7 @@ img {
 	text-align: center;
 	width: 45%;
 	padding: 2px;
+	transition: color 0.5s;
 }
 
 .choices:hover {
@@ -123,7 +129,9 @@ img {
 
 
 
-
-@media only screen and (min-width: 350px) {.sidebar {background-image: url("../img/640x480.png");}}
-@media only screen and (min-width: 800px) {.sidebar {background-image: url("../img/800x600.png");}}
-@media only screen and (min-width: 1024px) {.sidebar {background-image: url("../img/1024x768.png");}}
+@media only screen and (min-width: 350px) {#leftPic {background-image: url("../img/noWingbackSmallLeft.png"); height: 500px;}}
+@media only screen and (min-width: 350px) {#rightPic {background-image: url("../img/noWingbackSmallRight.png"); height: 500px;}}
+@media only screen and (min-width: 600px) {#leftPic {background-image: url("../img/wingbackLeftMedium.png"); height: 500px;}}
+@media only screen and (min-width: 600px) {#rightPic {background-image: url("../img/wingbackRightMedium.png"); height: 500px;}}
+@media only screen and (min-width: 1024px) {#leftPic {background-image: url("../img/wingbackLeft.png"); height: 768px;}}
+@media only screen and (min-width: 1024px) {#rightPic {background-image: url("../img/wingbackRight.png"); height: 768px;}}
