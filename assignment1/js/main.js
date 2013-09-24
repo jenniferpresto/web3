@@ -35,8 +35,6 @@ for (var i = 0; i < choices.length; i++) {
 	});
 }
 
-console.log("choices: ", choices);
-
 // ----------------------------------
 // Begin Story Content:
 // ----------------------------------
@@ -64,7 +62,7 @@ pages[1] = new pageContent(
 	);
 
 pages[2] = new pageContent(
-	"You can expand your mind on some other vacation.\n\nA little haggard after the layover in Atlanta, which was supposed to have been three hours but wound up being six, you arrive in Myrtle Beach, South Carolina, where you rent a car and drive the short distance to Pawley&rsquo;s Island. There was no food on either flight, and you had to beg for a second glass of water, but now you&rsquo;re comfortably settled in the house you rented and you contemplate the day ahead. The choices seem boundless!",
+	"You can expand your mind on some other vacation.<br><br>A little haggard after the layover in Atlanta, which was supposed to have been three hours but wound up being six, you arrive in Myrtle Beach, South Carolina, where you rent a car and drive the short distance to Pawley&rsquo;s Island. There was no food on either flight, and you had to beg for a second glass of water, but now you&rsquo;re comfortably settled in the house you rented and you contemplate the day ahead. The choices seem boundless!",
 	"You want to sit on the beach and stare at the ocean.",
 	"You want to sit on the beach with a beer and stare at the ocean."
 	);
@@ -112,13 +110,13 @@ pages[9] = new pageContent(
 	);
 
 pages[10] = new pageContent(
-	"&ldquo;Hey, thanks!&rdquo; says the man, as he gratefully takes the bottles.\n\n&ldquo;We were really thirsty!&rdquo;\n\n&ldquo;No problem,&rdquo; you respond. Pawley&rsquo;s always brings out your friendliest characteristics.\n\n&ldquo;Listen,&rdquo; he says. &ldquo;This is sort of crazy, but we have actually something we can offer in return. Due to crazy scheduling, some last-minute travel changes, and our intense love of this idyllic place, we have a plane ticket to London that we&rsquo;re not going to use at all. It&rsquo;s fully transferable. Would you like to have it? We were going to go, but we decided that just staying on a beach would be better than trying to force ourselves to enjoy too much culture.&rdquo;",
+	"&ldquo;Hey, thanks!&rdquo; says the man, as he gratefully takes the bottles.<br><br>&ldquo;We were really thirsty!&rdquo;<br><br>&ldquo;No problem,&rdquo; you respond. Pawley&rsquo;s always brings out your friendliest characteristics.<br><br>&ldquo;Listen,&rdquo; he says. &ldquo;This is sort of crazy, but we have actually something we can offer in return. Due to crazy scheduling, some last-minute travel changes, and our intense love of this idyllic place, we have a plane ticket to London that we&rsquo;re not going to use at all. It&rsquo;s fully transferable. Would you like to have it? We were going to go, but we decided that just staying on a beach would be better than trying to force ourselves to enjoy too much culture.&rdquo;",
 	"You accept their ticket and go to London.",
 	"You choose to stay at the beach."
 	);
 
 pages[11] = new pageContent(
-	"You wave politely, and they cheerfully wave back. They slowly pass, and you watch them go by. Just as well: you didn&rsquo;t want any extra interaction. At the moment, you&rsquo;re content just to sit here on the beach, sipping from your bottle.\n\nYou stare at the horizon, and let your mind begin to wander.",
+	"You wave politely, and they cheerfully wave back. They slowly pass, and you watch them go by. Just as well: you didn&rsquo;t want any extra interaction. At the moment, you&rsquo;re content just to sit here on the beach, sipping from your bottle.<br><br>You stare at the horizon, and let your mind begin to wander.<br><br>THE END",
 	" ",
 	" "
 	);
@@ -136,7 +134,7 @@ pages[13] = new pageContent(
 	);
 
 pages[14] = new pageContent(
-	"&ldquo;Tell me more,&rdquo; you say. The rapport you&rsquo;ve managed to establish in such a short period is considerable. The man nods knowingly, leans in, and begins describing another perfect heist. You&rsquo;re amazed at the genius of it. You nod, memorize details, and agree to your role. Finally, in the early morning, you and he part ways, but with set tasks planned and an agreement to meet up again the following week. You start mentally preparing the letter of resignation to your job. This will have turned out to be a far more fruitful vacation than you had dared to hope.",
+	"&ldquo;Tell me more,&rdquo; you say. The rapport you&rsquo;ve managed to establish in such a short period is considerable. The man nods knowingly, leans in, and begins describing another perfect heist. You&rsquo;re amazed at the genius of it. You nod, memorize details, and agree to your role. Finally, in the early morning, you and he part ways, but with set tasks planned and an agreement to meet up again the following week. You start mentally preparing the letter of resignation to your job. This will have turned out to be a far more fruitful vacation than you had dared to hope.<br><br>THE END",
 	" ",
 	" "
 	);
@@ -154,19 +152,19 @@ pages[16] = new pageContent(
 	);
 
 pages[17] = new pageContent(
-	"You put on your best calming, mediating expression, and throw yourself into the middle of the room, where you try to find the main instigators to talk sense into them. Alas, before you have a chance to speak at all, a barstool leg smashes into the back of your head and knocks you immediately unconscious. Luckily for you, and as we all know from the opening ceremony at the Olympics, England has a world-class public-health system. Which is very lucky for you, since you&rsquo;ll be needing it for the rest of your vacation.",
+	"You put on your best calming, mediating expression, and throw yourself into the middle of the room, where you try to find the main instigators to talk sense into them. Alas, before you have a chance to speak at all, a barstool leg smashes into the back of your head and knocks you immediately unconscious. Luckily for you, and as we all know from the opening ceremony at the Olympics, England has a world-class public-health system. Which is very lucky for you, since you&rsquo;ll be needing it for the rest of your vacation.<br><br>THE END",
 	" ",
 	" "
 	);
 
 pages[18] = new pageContent(
-	"&ldquo;That&rsquo;s a really generous offer, but I&rsquo;m fine staying here,&rdquo; you respond. &ldquo;I don&rsquo;t want to deal with too much culture on this vacation, either.&rdquo;\n\nThey smile and nod, kindred spirits. You chat for a while, and discover all sorts of common tastes. They invite you to meet them later that evening for dinner; you happily accept. A relaxing vacation, and possibly new friends!\n\n&ldquo;See you later!&rdquo; the man says. They continue their walk down the beach.\n\nYou smile contentedly. Then you stare at the horizon, and let your mind begin to wander.",
+	"&ldquo;That&rsquo;s a really generous offer, but I&rsquo;m fine staying here,&rdquo; you respond. &ldquo;I don&rsquo;t want to deal with too much culture on this vacation, either.&rdquo;<br><br>They smile and nod, kindred spirits. You chat for a while, and discover all sorts of common tastes. They invite you to meet them later that evening for dinner; you happily accept. A relaxing vacation, and possibly new friends!<br><br>&ldquo;See you later!&rdquo; the man says. They continue their walk down the beach.<br><br>You smile contentedly. Then you stare at the horizon, and let your mind begin to wander.<br><br>THE END",
 	" ",
 	" "
 	);
 
 pages[19] = new pageContent(
-	"You start mentally preparing yourself for a lengthy battle with the UK criminal justice system.",
+	"You start mentally preparing yourself for a lengthy battle with the UK criminal justice system.<br><br>THE END",
 	" ",
 	" "
 	);
@@ -180,21 +178,27 @@ pages[19] = new pageContent(
 displayPage(page);
 
 function startStory() {
-	console.log("calling startStory");
    $('#intro-canvas').hide();
    $('#story-canvas').show();
    page = 1;
 	displayPage(1);
-	console.log("calling displayPage");
 }
 
 function displayPage(currentPage) {
 	for (var i = 0; i < pages.length; i++) {
 		if (i + 1 == currentPage) {
 			mainStory.innerHTML = pages[i].story;
-			console.log("innerHTML");
+			/* following messes up formatting going forward
+			if (pages[i].choice1 == pages[i].choice2) {
+				choices[0].innerHTML = pages[i].choice1;
+				choices[1].innerHTML = " ";
+				// before do the following, need a way to undo it
+				// choices[0].style.width = "99%";
+				// choices[1].style.width = "0%"; 
+			} else { */
 			choices[0].innerHTML = pages[i].choice1;
 			choices[1].innerHTML = pages[i].choice2;
+			/*}*/
 		}
 	}
 	console.log("on page: " + page);
@@ -342,5 +346,4 @@ function turnPage(pageNumber, choiceValue) {
 	}
 
 	// skip pages 18, 19, and 20; all endings
-	console.log("New page: " + page);
 }
