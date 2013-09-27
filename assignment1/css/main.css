@@ -8,7 +8,7 @@ body {
 
 div {
 	display: inline-block;
-	height: 100%;
+	/*height: 100%;*/
 }
 
 img {
@@ -29,6 +29,10 @@ img {
 #intro-image {
 	width: 100%;
 	text-align: center;
+}
+
+#intro-image:hover {
+	cursor: pointer;
 }
 
 #story-canvas {
@@ -77,6 +81,7 @@ img {
 	position: relative;
 	border-width: 0px;
 	width: 100%;
+	height: 300px; /* made this very large so that you can scroll over fixed bottom even when screen is narrow */
 	margin: 0 auto;
 	clear: both;
 }
@@ -112,13 +117,27 @@ img {
 	float: right;
 }
 
+#bottomElements{
+	text-align: center;;
+	width: 100%;
+	height: 90px; /* weirdly needed to put a height here, or everything smushed to the left */
+	position: fixed;
+	bottom: 10px;
+}
+
+.bottomSide {
+	float: left;
+	width: 29.5%;
+	height: 100%; /* needed to put height here, too */
+}
 
 #goBack {
-	width: 100%;
-	margin-top: 30px;
+	float: left;
+	width: 40%;
+	padding-top: 1em;
+	background: #fff;
 	text-align: center;
-	/*position: absolute;*/
-	bottom: 10px;
+	border-top: 1px solid black;
 	transition: color 0.5s;
 }
 
