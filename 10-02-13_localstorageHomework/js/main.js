@@ -52,8 +52,47 @@ function displayPost( post, indexNumber ){
     }
     console.log(html);
     $('#feed').prepend(html);
+
+    // add click listener to each article
+    $('article').click(function () {
+        // toggle the class being clicked
+        $(this).toggleClass("active");
+        // $(this).active = true; // don't want to add "active" to article, but post
+        console.log(this.id); // this works
+
+        // if other class is active, toggle that off of active
+        for (i=0, count=posts.length; i<count; i++) {
+            // test the objects in order to see if they match "this"
+            // console.log ("getting id: " + document.getElementById("article" + i).id);
+            var currentObject = document.getElementById("article" + i);
+            // console.log("currentObject: " + currentObject);
+
+            // if the post is the one we've clicked, chnage its "active" tag to true
+            if ($(this).attr('id') == $(currentObject).attr('id')) {
+                posts[i].active = true;
+
+                // if there's been a change, store the posts again
+                storePosts(posts);
+                console.log("storing posts!");
+            }
+
+            // if the object being tested isn't the one clicked, AND its class is "active," change it
+            if ($(this).attr('id') != $(currentObject).attr('id')) {
+                if ($(currentObject).attr('class') == "active") {
+                    $(currentObject).toggleClass("active");
+                    posts[i].active = false;
+
+                    // if there's been a change, store the posts again
+                    storePosts(posts);
+                    console.log("storing posts again!");
+                }
+            }
+        }
+    });
+
     
 }
+
 
 
 /**
@@ -119,42 +158,6 @@ function loadPosts(){
             displayPost( post, i );
         }
 
-        // add click listener to each article
-        $('article').click(function () {
-            // toggle the class being clicked
-            $(this).toggleClass("active");
-            // $(this).active = true; // don't want to add "active" to article, but post
-            console.log(this.id); // this works
-
-            // if other class is active, toggle that off of active
-            for (i=0, count=posts.length; i<count; i++) {
-                // test the objects in order to see if they match "this"
-                // console.log ("getting id: " + document.getElementById("article" + i).id);
-                var currentObject = document.getElementById("article" + i);
-                // console.log("currentObject: " + currentObject);
-
-                // if the post is the one we've clicked, chnage its "active" tag to true
-                if ($(this).attr('id') == $(currentObject).attr('id')) {
-                    posts[i].active = true;
-
-                    // if there's been a change, store the posts again
-                    storePosts(posts);
-                    console.log("storing posts!");
-                }
-
-                // if the object being tested isn't the one clicked, AND its class is "active," change it
-                if ($(this).attr('id') != $(currentObject).attr('id')) {
-                    if ($(currentObject).attr('class') == "active") {
-                        $(currentObject).toggleClass("active");
-                        posts[i].active = false;
-
-                        // if there's been a change, store the posts again
-                        storePosts(posts);
-                        console.log("storing posts again!");
-                    }
-                }
-            }
-        });
     } else { // nothing in storage?
     
         posts = []; 
