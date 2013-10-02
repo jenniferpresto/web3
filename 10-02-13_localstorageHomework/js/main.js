@@ -115,15 +115,22 @@ function loadPosts(){
         }
         // add click listener to each article
         $('article').click(function () {
-            // toggle the individual class
+            // toggle the class being clicked
             $(this).toggleClass("active");
             console.log(this.id); // this works
 
-            // switch off other active classes
+            // if other class is active, toggle that
             for (i=0, count=posts.length; i<count; i++) {
                 // var idName = "article" + i + '\"';
                 // console.log(idName);
-                
+                var currentObject = document.getElementById("article" + i);
+                console.log("currentObject: " + currentObject);
+                if ($(this).attr('id') != $(currentObject).attr('id')) {
+                    if ($(currentObject).attr('class') == "active") {
+                        $(currentObject).toggleClass("active");
+                    }
+                }
+
                 console.log ("getting id: " + document.getElementById("article" + i).id);
                 if (posts[i].id != this.id && posts[i].class == "active") {
                     $(posts[i]).toggleClass("active");
