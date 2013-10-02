@@ -145,7 +145,7 @@ function loadPosts(){
                 if ($(this).attr('id') != $(currentObject).attr('id')) {
                     if ($(currentObject).attr('class') == "active") {
                         $(currentObject).toggleClass("active");
-                        posts[i] = false;
+                        posts[i].active = false;
 
                         // if there's been a change, store the posts again
                         storePosts(posts);
