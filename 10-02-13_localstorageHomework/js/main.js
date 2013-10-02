@@ -139,6 +139,7 @@ function loadPosts(){
 
                     // if there's been a change, store the posts again
                     storePosts(posts);
+                    console.log("storing posts!");
                 }
 
                 // if the object being tested isn't the one clicked, AND its class is "active," change it
@@ -149,6 +150,7 @@ function loadPosts(){
 
                         // if there's been a change, store the posts again
                         storePosts(posts);
+                        console.log("storing posts again!");
                     }
                 }
             }
