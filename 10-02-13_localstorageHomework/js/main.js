@@ -24,6 +24,7 @@ $('#draft button').click( function(event){
     var post = {};
     post.title = $('#title').val();
     post.content = $('#content').val();
+    post.active = false;
 
     // add post to posts
     posts.push(post);
@@ -44,7 +45,11 @@ $('#draft button').click( function(event){
 
 function displayPost( post, indexNumber ){
     
-    var html = '<article id = \'article' + indexNumber + '\'><h2>'+ post.title +'</h2><p>'+ post.content +'</p></article>';
+    if (post.active) {
+        var html = '<article class = \'active\' id = \'article' + indexNumber + '\'><h2>'+ post.title +'</h2><p>'+ post.content +'</p></article>';
+    } else {
+        var html = '<article id = \'article' + indexNumber + '\'><h2>'+ post.title +'</h2><p>'+ post.content +'</p></article>';
+    }
     console.log(html);
     $('#feed').prepend(html);
     
@@ -113,26 +118,28 @@ function loadPosts(){
             console.log( post );
             displayPost(post, i);
         }
+
         // add click listener to each article
         $('article').click(function () {
             // toggle the class being clicked
             $(this).toggleClass("active");
+            $(this).active = true;
             console.log(this.id); // this works
 
             // if other class is active, toggle that off of active
             for (i=0, count=posts.length; i<count; i++) {
+                // test the objects in order to see if they match "this"
                 // console.log ("getting id: " + document.getElementById("article" + i).id);
                 var currentObject = document.getElementById("article" + i);
-                console.log("currentObject: " + currentObject);
+                // console.log("currentObject: " + currentObject);
+
+                // if the object being tested isn't the one clicked, AND its class is "active," change it
                 if ($(this).attr('id') != $(currentObject).attr('id')) {
                     if ($(currentObject).attr('class') == "active") {
                         $(currentObject).toggleClass("active");
+                        $(currentObject).active = false;
                     }
                 }
-
-                // if (posts[i].id != this.id && posts[i].class == "active") {
-                //     $(posts[i]).toggleClass("active");
-                // }
             }
         });
     } else { // nothing in storage?
