@@ -119,10 +119,9 @@ function loadPosts(){
             $(this).toggleClass("active");
             console.log(this.id); // this works
 
-            // if other class is active, toggle that
+            // if other class is active, toggle that off of active
             for (i=0, count=posts.length; i<count; i++) {
-                // var idName = "article" + i + '\"';
-                // console.log(idName);
+                // console.log ("getting id: " + document.getElementById("article" + i).id);
                 var currentObject = document.getElementById("article" + i);
                 console.log("currentObject: " + currentObject);
                 if ($(this).attr('id') != $(currentObject).attr('id')) {
@@ -131,10 +130,9 @@ function loadPosts(){
                     }
                 }
 
-                console.log ("getting id: " + document.getElementById("article" + i).id);
-                if (posts[i].id != this.id && posts[i].class == "active") {
-                    $(posts[i]).toggleClass("active");
-                }
+                // if (posts[i].id != this.id && posts[i].class == "active") {
+                //     $(posts[i]).toggleClass("active");
+                // }
             }
         });
     } else { // nothing in storage?
