@@ -1,5 +1,6 @@
 body {
 	background: #D0BCAA;
+	padding-top: 2.5em;
 }
 
 #home {
@@ -8,10 +9,35 @@ body {
 
 .page {
 	display: none;
-	position: fixed; /* why is this necessary; flashes down below if don't use -- how come? */
+	/* Note: try to fix position issue when fading out/in */
+	/* addressed so far with delaying fadeIn for 400 ms */
+	/* but now herky-jerky container change; see if can fix that */
+	/*position: fixed;  why is this necessary?  */
+	/*padding-top: 3em;*/
+	/*position: absolute;*/
 	width: 100%;
 	height: 100%;
-	padding-top: 3em;
+}
+
+.container {
+	margin: 1em auto;
+	padding: 1em;
+	width: 75%;
+	background: #F3DFCE;
+	height: auto;
+}
+
+button#newStory {
+	margin-left: 1em;
+}
+
+form#addToStory label {
+	display: block;
+	margin-top: 1em;
+}
+
+form#addToStory input, textarea {
+	width: 100%;
 }
 
 /***********

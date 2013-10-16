@@ -11,49 +11,51 @@
 		<!-- Navigation bar -->
 		<header>
 			<nav>
-				<a href="#">home</a>
-				<a href="#">latest</a>
-				<a href="#">all</a>
+				<a href="#home">Home</a>
+				<a href="#latest">Latest Story</a>
+				<a href="#all">All Stories</a>
 			</nav>
 		</header>
 		
-		<!-- Home page -->
-		<section id="home" class="page">
-			<p>Contribute to a story or start a new one. Whee!</p>
-			<section id="titleList">
-				<ul>
-					<li class="template"></li>
-				</ul>
-			</section> <!-- end of titleList template -->
-		</section> <!-- end of home page -->
+		<section class="container">
+			<!-- Home page -->
+			<section id="home" class="page">
+				<p>Contribute to a story or start a new one. Whee!</p>
+				<section id="titleList">
+					<ul>
+						<li class="template"></li>
+					</ul>
+				</section> <!-- end of titleList template -->
+			</section> <!-- end of home page -->
 
-		<!-- Latest story in progress page -->
-		<section id="latest" class="page">
-			<p>test current story<p>
-			<section id="storyDetail">
-				<ul>
-					<li class="template"></li>
-				</ul>
-			</section> <!-- end of storyDetail template -->
-			<form id="addToStory">
-				<label for="author">Author</label>
-				<input id="author" name="author" placeholder="Your name">
-				<label for="content">Story</label>
-				<textarea id="content" name="content" placeholder="Enter what should happen next"></textarea>
-				<button class="newText">Submit your development to this story</button>
-			</form>
-		</section> <!-- end of inProgress page -->
+			<!-- Latest story in progress page -->
+			<section id="latest" class="page">
+				<p>test current story<p>
+				<section id="storyDetail">
+					<ul>
+						<li class="template"></li>
+					</ul>
+				</section> <!-- end of storyDetail template -->
+				<form id="addToStory">
+					<label for="author">Author</label>
+					<input id="author" name="author" placeholder="Your name">
+					<label for="content">Story</label>
+					<textarea id="content" name="content" placeholder="What happens next?"></textarea>
+					<button class="newText">Submit your development to this story</button>
+				</form>
+			</section> <!-- end of inProgress page -->
 
-		<!-- All titles page -->
-		<section id="all" class="page">
-			<p>test titles</p>
-			<section id="titleListDetail">
-				<ul>
-					<li class="template"></li>
-				</ul>
-			<button id="newStory" class="newStory">generate a brand new story</button>
-			</section> <!-- end of titleListDetail template -->
-		</section> <!-- end of titles page -->
+			<!-- All titles page -->
+			<section id="all" class="page">
+				<p>test titles</p>
+				<section id="titleListDetail">
+					<ul>
+						<li class="template"></li>
+					</ul>
+				<button id="newStory" class="newStory">generate a brand new story</button>
+				</section> <!-- end of titleListDetail template -->
+			</section> <!-- end of titles page -->
+		</section> <!-- end of container -->
 
 		<div class="notice">Please hold...</div>
 

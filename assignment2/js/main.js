@@ -8,9 +8,9 @@ $('header nav').on('click', 'a', function(event){
     $('header nav a').removeClass('active');    
     $(this).toggleClass('active');
     
-    var page = $(this).text();
+    var page = $(this).attr("href");
     $('.page').fadeOut();
-    $('#' + page).fadeIn();
+    $(page).delay(400).fadeIn();
 
 })
 
@@ -118,16 +118,13 @@ function getRandomImage () {
 				}
 			}
 
-			console.log("print ouf animatedGifs");
-			console.log(animatedGifs);
-			console.log(animatedGifs[0]);
-
-			console.log("there are " + animatedCounter + " animated GIFs");
 			console.log("length of animatedGifs: " + animatedGifs.length);
 			console.log("length of stillImages: " + stillImages.length);
+
 			var imageUrl;
+
 			// prioritize animated GIFs over other possibilities
-			if (animatedCounter > 0) {
+			if (animatedGifs.length > 0) {
 				var randomNumber = Math.floor(Math.random() * animatedGifs.length);
 				console.log(randomNumber);
 				imageUrl = animatedGifs[randomNumber];
