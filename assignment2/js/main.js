@@ -20,7 +20,7 @@ Variables for cartodb
 
 var cartodb_accountname = 'sandlappernyc';
 var writeUrl = 'http://sandlappernyc.cartodb.com/api/v2/sql?q=';
-var api_key = '&api_key=b3c3e1286652256b3974e4e06e7c6811f5f16101';
+var carto_api_key = '&api_key=b3c3e1286652256b3974e4e06e7c6811f5f16101';
 var table_name = 'narrativetable';
 
 /************
@@ -39,7 +39,7 @@ http://sandlappernyc.cartodb.com/api/v2/sql?q=INSERT INTO table_name (the_geom, 
 
 function addStoryEntry (author, content) {
 	var sqlInsert = "INSERT INTO " + table_name + " (author, narrativetext) VALUES ( '" + author + "', '" + content + "');"
-	var writeCommand = writeUrl + sqlInsert + api_key;
+	var writeCommand = writeUrl + sqlInsert + carto_api_key;
 	
 	// console.log(sqlInsert);
 	console.log(writeCommand);
@@ -60,10 +60,10 @@ function addStoryEntry (author, content) {
 }
 
 /************
-Click event for addStory button
+Click event for addToStory button
 *************/
 
-$('#enterStory button').click (function (event) {
+$('#addToStory button').click (function (event) { // could be form#addToStory; space means something _within_ it (like in CSS)
 
 	// stop form from sending/refreshing page
 	event.preventDefault(event);
@@ -74,3 +74,37 @@ $('#enterStory button').click (function (event) {
 
 	addStoryEntry(author, content);
 })
+
+/************
+Click event for newStory button
+*************/
+
+$('#newStory').click (function (event) { // could also say button#newStory
+
+	// stop form from sending/refreshing page
+	event.preventDefault(event);
+
+	// run function
+	getImage();
+
+})
+
+/************
+Variables for imgur API:
+Client ID: 3194eb4c645950f
+Client secret: 85cd9f0ba88ebb4fd3cea72861fe1d928e86e751
+*************/
+
+function getImage () {
+	$.ajax({
+		url: 'https://api.imgur.com/3/gallery/random/random/',
+		headers: {
+			'Authorization': 'Client-ID 3194eb4c645950f'
+		},
+		type: 'GET',
+		success: function(randomList) {
+			// console.log (urlRequest.data.length);
+			console.log(randomList);
+		}
+	})
+}
