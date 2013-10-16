@@ -1,0 +1,70 @@
+body {
+	background: #D0BCAA;
+}
+
+#home {
+	display: block;
+}
+
+.page {
+	display: none;
+	position: fixed; /* why is this necessary; flashes down below if don't use -- how come? */
+	width: 100%;
+	height: 100%;
+	padding-top: 3em;
+}
+
+/***********
+Typography
+***********/
+
+p {
+	color: #271917;
+	margin: 1em;
+}
+
+/***********
+Loading Notice
+***********/
+
+.notice {
+	display: none;
+	position:fixed;
+	top:20%;
+	left: 0%;
+	right: 0%;
+	padding: 2em;
+	color: #FFF;
+	background: rgba(108, 89, 76, 0.5);
+	text-align: center;
+}
+
+/*************
+Navigation bar
+**************/
+
+nav {
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	right: 0%;
+	background: #521B20;
+	z-index: 2;
+}
+
+nav a {
+	float: left;
+	width: 33.3%;
+	padding: 0.5em 0em;
+	background: #521B20;
+	color: #FFF;
+	text-align: center;
+	text-decoration: none;
+	border: 4px solid transparent; /* transparent shows b/g through; white border comes from "color" attribute here */
+	border-width: 4px 0;
+
+}
+
+nav a:hover {
+	background: rgba(243, 223, 206, 0.25);
+}
