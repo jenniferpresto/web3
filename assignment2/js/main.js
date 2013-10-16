@@ -44,6 +44,19 @@ function addStoryEntry (author, content) {
 	// console.log(sqlInsert);
 	console.log(writeCommand);
 
+	$.getJSON(writeCommand, function(data) {
+		console.log(data);
+	})
+	.success(function(response) {
+		console.log('table successfully updated');
+		console.log(response);
+	})
+	.error(function () {
+		console.log('Error');
+	})
+	.complete(function() { 
+		console.log('complete');
+	});
 }
 
 /************
