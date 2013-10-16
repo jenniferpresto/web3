@@ -85,17 +85,15 @@ $('#newStory').click (function (event) { // could also say button#newStory
 	event.preventDefault(event);
 
 	// run function
-	getImage();
+	getRandomImage();
 
 })
 
 /************
-Variables for imgur API:
-Client ID: 3194eb4c645950f
-Client secret: 85cd9f0ba88ebb4fd3cea72861fe1d928e86e751
+Variables for imgur API
 *************/
 
-function getImage () {
+function getRandomImage () {
 	$.ajax({
 		url: 'https://api.imgur.com/3/gallery/random/random/',
 		headers: {
@@ -103,8 +101,41 @@ function getImage () {
 		},
 		type: 'GET',
 		success: function(randomList) {
-			// console.log (urlRequest.data.length);
 			console.log(randomList);
+			var animatedCounter = 0; // just to keep track in a way that's easier to print to console
+			var animatedGifs = [];
+			var stillImages = [];
+			for (var i = 0; i < randomList.data.length; i++) {
+				// to prioritize animated GIFs, separate the two types
+				// into two different arrays
+				if (randomList.data[i].animated) {
+					// save URL of animated GIF to its own array
+					animatedGifs.push(randomList.data[i].link);
+					// keep track of how many there are
+					animatedCounter++; // can prolly get rid of later
+				} else {
+					stillImages.push(randomList.data[i].link);
+				}
+			}
+
+			console.log("print ouf animatedGifs");
+			console.log(animatedGifs);
+			console.log(animatedGifs[0]);
+
+			console.log("there are " + animatedCounter + " animated GIFs");
+			console.log("length of animatedGifs: " + animatedGifs.length);
+			console.log("length of stillImages: " + stillImages.length);
+			var imageUrl;
+			// prioritize animated GIFs over other possibilities
+			if (animatedCounter > 0) {
+				var randomNumber = Math.floor(Math.random() * animatedGifs.length);
+				console.log(randomNumber);
+				imageUrl = animatedGifs[randomNumber];
+			} else {
+				randomNumber = Math.floor(Math.random() * stillImages.length);
+				imageUrl = stillImages[randomNumber];
+			}			
+			console.log("and the magic URL is... " + imageUrl);
 		}
 	})
 }
