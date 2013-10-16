@@ -24,6 +24,20 @@ p {
 }
 
 /***********
+Forms
+***********/
+
+form {
+	/*margin-bottom: 1em;*/
+	margin: 1em;
+}
+
+input, textarea {
+	display: block;
+	margin: .25em 0;
+}
+
+/***********
 Loading Notice
 ***********/
 
