@@ -36,8 +36,17 @@ form#addToStory label {
 	margin-top: 1em;
 }
 
-form#addToStory input, textarea {
+form#addToStory input {
+	width: 60%;
+}
+
+form#addToStory textarea {
 	width: 100%;
+	height: 4em;
+}
+
+.template {
+	display: none;
 }
 
 /***********
