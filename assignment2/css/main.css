@@ -64,19 +64,18 @@ ul {
 .storyLine {
 	display: inline-block;
 	float: left;
-	width: 20%;
+	clear: left;
+	width: 60%;
+	margin-top: 1em;
 }
 
 .credit {
 	float: left;
-	width: 20%;
+	width: 30%;
+	margin-top: 1em;
 }
 
-/* Clearfix */
-
-div.floatbreak {
-	clear: both;
-}
+/* Clearfix : couldn't get this to work on details; */
 
 .clearfix:before,
 .clearfix:after {
@@ -91,7 +90,7 @@ div.floatbreak {
 .clearfix {
     *zoom: 1;
 }
-
+*/
 /***********
 Typography
 ***********/

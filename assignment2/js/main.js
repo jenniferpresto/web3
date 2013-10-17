@@ -90,7 +90,7 @@ function queryStoryDetails (titleNumber) {
 			// var temp = template.find('.storyLine');
 			// console.log("temp element: ", temp); // this seems right
 			template.find('.storyLine').html(detailData.rows[i].narrativetext);
-			template.find('.credit').html('<i> written by ' + detailData.rows[i].author + '</i><div class=\'floatbreak\' ></div>');
+			template.find('.credit').html('<i> written by ' + detailData.rows[i].author + '</i>');
 
 			storyOutput.push(template);
 		}
@@ -101,7 +101,7 @@ function queryStoryDetails (titleNumber) {
 		console.log('getJSON success for storydetails');
 		if (query_count > 0) {
 			$('.details ul').append(storyOutput);
-			$('.details ul').append("<section class='clearfix'></section>")
+			$('.details ul').append("<section class='clearfix'></section>");
 		} else {
 			console.log('that story is empty');
 		}
