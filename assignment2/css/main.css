@@ -31,6 +31,8 @@ button#newStory {
 	margin-left: 1em;
 }
 
+/* form for adding details to a story */
+
 form#addToStory label {
 	display: block;
 	margin-top: 1em;
@@ -47,6 +49,47 @@ form#addToStory textarea {
 
 .template {
 	display: none;
+}
+
+/* list of existing story details */
+
+ul {
+	padding: 0;
+	margin-left: 1em;
+}
+.priorDetail {
+	list-style: none;
+}
+
+.storyLine {
+	display: inline-block;
+	float: left;
+	width: 20%;
+}
+
+.credit {
+	float: left;
+	width: 20%;
+}
+
+/* Clearfix */
+
+div.floatbreak {
+	clear: both;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
 }
 
 /***********

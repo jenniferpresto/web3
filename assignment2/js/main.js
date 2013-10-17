@@ -69,15 +69,48 @@ function queryStoryDetails (titleNumber) {
 
 	var storyOutput = [];
 	var templateA = $('.details li.template'); // template in HTML
+	console.log ("this is templateA: ", templateA);
 	var query_count; // total returned
 
 	$.getJSON(cartoCommand, function(detailData) {
 		query_count = detailData.rows.length;
 		console.log(detailData.rows);
-		console.log(query_count);
-		storyOutput = detailData.rows;
+
+		// how would I use $.each for this and access the appropriate text for each one?
+		// $.each(detailData.rows, function () {
+		// 	var template = templateA.clone();
+		// 	template.removeClass('template');
+		// 	template.find('.storyLine').html([need to put stuff here]);
+		// } )
+
+		for (var i = 0, j = detailData.rows.length; i < j; i++) {
+			var template = templateA.clone();
+			template.removeClass('template');
+			template.addClass('priorDetail');
+			// var temp = template.find('.storyLine');
+			// console.log("temp element: ", temp); // this seems right
+			template.find('.storyLine').html(detailData.rows[i].narrativetext);
+			template.find('.credit').html('<i> written by ' + detailData.rows[i].author + '</i><div class=\'floatbreak\' ></div>');
+
+			storyOutput.push(template);
+		}
+		console.log("storyOutput length: " + storyOutput.length);
+		console.log("storyOutput is this: ", storyOutput);
 	})
-}
+	.success(function() {
+		console.log('getJSON success for storydetails');
+		if (query_count > 0) {
+			$('.details ul').append(storyOutput);
+			$('.details ul').append("<section class='clearfix'></section>")
+		} else {
+			console.log('that story is empty');
+		}
+	})
+	.error(function() {
+		console.log('getJSON error; boo, hoo');
+	})
+	.complete(function() {});
+};
 
 queryStoryDetails(2);
 
