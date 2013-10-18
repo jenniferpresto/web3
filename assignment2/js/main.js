@@ -1,3 +1,5 @@
+var currentTitle = 1;
+
 /************
 Page navigation
 *************/
@@ -52,16 +54,33 @@ var cartodb_accountname = 'sandlappernyc';
 var writeUrl = 'http://sandlappernyc.cartodb.com/api/v2/sql?q=';
 var carto_api_key = '&api_key=b3c3e1286652256b3974e4e06e7c6811f5f16101';
 var table_name = 'narrativetable';
+var title_table_name = 'titletable';
 var cartoCommand;
 
 /************
-Querying cartodb for story details
+Querying cartodb for story title
+
+This works:
+SELECT * FROM titletable WHERE (titlenumber = 1)
 *************/
 
-/*
+function queryStoryTitle (titleNumber) {
+	var sqlTitleQuery = "SELECT * FROM " + title_table_name + " WHERE (titlenumber = " + currentTitle + ")";
+	cartoCommand = writeUrl + sqlTitleQuery + carto_api_key;
+
+	var titleOutput = [];
+	console.log("titleOutput", titleOutput);
+}
+
+queryStoryTitle(currentTitle);
+
+/************
+Querying cartodb for story details
+
 This works:
 SELECT * FROM narrativetable WHERE (storytitle = 1) ORDER BY (created_at) ASC
-*/
+
+*************/
 
 function queryStoryDetails (titleNumber) {
 	var sqlStoryQuery = "SELECT * FROM " + table_name + " WHERE (storytitle = " + titleNumber + ") ORDER BY (created_at) ASC";
@@ -112,7 +131,7 @@ function queryStoryDetails (titleNumber) {
 	.complete(function() {});
 };
 
-queryStoryDetails(2);
+queryStoryDetails(currentTitle);
 
 /************
 Inserting row into cartodb table

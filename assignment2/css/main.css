@@ -72,6 +72,8 @@ ul {
 .credit {
 	float: left;
 	width: 30%;
+	font-size: 90%;
+	padding: 0.25em; /* to make sure space between story line and author name */
 	margin-top: 1em;
 }
 
@@ -87,10 +89,11 @@ ul {
     clear: both;
 }
 
-.clearfix {
-    *zoom: 1;
+/*.clearfix {
+    zoom: 1;
 }
 */
+
 /***********
 Typography
 ***********/
