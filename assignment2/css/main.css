@@ -56,12 +56,10 @@ form#addToStory textarea {
 ul {
 	padding: 0;
 	margin-left: 1em;
-}
-.priorDetail {
 	list-style: none;
 }
 
-.storyLine {
+.storyLine, .storyTitle {
 	display: inline-block;
 	float: left;
 	clear: left;
@@ -69,7 +67,11 @@ ul {
 	margin-top: 1em;
 }
 
-.credit {
+.storyTitle {
+	cursor: pointer;
+}
+
+.credit, .progress {
 	float: left;
 	width: 30%;
 	font-size: 90%;

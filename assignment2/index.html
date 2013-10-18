@@ -13,7 +13,7 @@
 		<header>
 			<nav>
 				<a href="#home">Home</a>
-				<a href="#latest">Latest Story</a>
+				<a href="#current">The Story</a>
 				<a href="#all">All Stories</a>
 			</nav>
 		</header>
@@ -22,15 +22,15 @@
 			<!-- Home page -->
 			<section id="home" class="page">
 				<p>Contribute to a story or start a new one. Whee!</p>
-				<section id="titleList">
+				<section id="homePage">
 					<ul>
 						<li class="template"></li>
 					</ul>
 				</section> <!-- end of titleList template -->
 			</section> <!-- end of home page -->
 
-			<!-- Latest story in progress page -->
-			<section id="latest" class="page">
+			<!-- Current story to be displayed -->
+			<section id="current" class="page">
 				<p>Generic Story Title!<p>
 				<section id="storyDetail" class="details">
 					<ul>
@@ -50,12 +50,15 @@
 
 			<!-- All titles page -->
 			<section id="all" class="page">
-				<p>test titles</p>
-				<section id="titleListDetail">
+				<p>List of all story titles</p>
+				<section id="titleListAll">
 					<ul>
-						<li class="template"></li>
+						<li class="template">
+							<div class="storyTitle">template</div><div class="progress"></div>
+
+						</li>
 					</ul>
-				<button id="newStory" class="newStory">generate a brand new story</button>
+				<button id="newStory" class="newStory">Start a brand new story</button>
 				</section> <!-- end of titleListDetail template -->
 			</section> <!-- end of titles page -->
 		</section> <!-- end of container -->
