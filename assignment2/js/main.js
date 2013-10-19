@@ -46,6 +46,7 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 
 	addStoryEntry(author, content);
 
+	$('input, textarea').val('');
 
 })
 
