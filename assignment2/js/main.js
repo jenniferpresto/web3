@@ -62,7 +62,7 @@ $('#newStory').click (function (event) { // could also say button#newStory
 	// query titles table to find out the largest titlenumber
 
 	// run function
-	getRandomImage();
+	getRandomImage(); // this sets currentTitleUrl to random picture
 
 })
 
@@ -103,6 +103,9 @@ function queryStoryTitles () {
 	var allTitles = [];
 	var templateTitles = $('#titleListAll li.template'); // template in HTML
 	var numTitles;
+
+	// remove all lines from the title list page (will put back with $.getJSON function)
+	$('.titleList').remove();
 
 	$.getJSON(cartoCommand, function(titleData) {
 		console.log("titleData", titleData);
@@ -247,6 +250,28 @@ function addStoryEntry (author, content) {
 	});
 }
 
+function addNewTitle () {
+	var sqlNewTitle = "INSERT INTO " + title_table_name + " (imageurl, inprogress, title, titlenumber) VALUES ( '" + currentTitleImage + "', '" + true + "', 'Test Title " + currentTitleNumber + "', '" + currentTitleNumber + "');"
+	writeCommand = cartoUrl + sqlNewTitle + carto_api_key;
+
+	console.log(writeCommand);
+	// actually send the command to cartodb
+	$.getJSON(writeCommand, function(data) {
+		console.log(data);
+	})
+	.success(function(response) {
+		console.log('table successfully updated');
+		console.log(response);
+		// refresh the page
+		queryStoryTitles();
+	})
+	.error(function () {
+		console.log('Error');
+	})
+	.complete(function() { 
+		console.log('complete');
+	});
+}
 
 /************
 Variables for imgur API
@@ -288,6 +313,9 @@ function getRandomImage () {
 				imageUrl = stillImages[randomNumber];
 			}			
 			console.log("and the magic URL is... " + imageUrl);
+			currentTitleImage = imageUrl;
+			currentTitleNumber = largestTitleNumber + 1; // setting new title
+			addNewTitle();
 		}
 	})
 }
@@ -295,7 +323,7 @@ function getRandomImage () {
 
 
 /*********************************************
-Calling certain functions right away
+Calling one function right away
 *********************************************/
 
 queryStoryTitles();
