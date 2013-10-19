@@ -87,21 +87,16 @@ function queryStoryTitles () {
 			var template = templateTitles.clone();
 			template.removeClass('template');
 			template.addClass('titleList');
-			// $(template).html(titleData.rows[i].title);
 			template.find('.storyTitle').html(titleData.rows[i].title);
 			if (titleData.rows[i].inprogress) {
 				template.find('.progress').html('<i>story in progress</i>');
 			}
-			console.log("title number: " + titleData.rows[i].titlenumber);
-			console.log("currentTitleNumber: " + currentTitleNumber);
 			// save title text to global variable
 			if (titleData.rows[i].titlenumber == currentTitleNumber) {
-				console.log("if statement firing");
 				currentTitleText = titleData.rows[i].title;
 				currentTitleImage = titleData.rows[i].imageurl;
 			}
 			allTitles.push(template);
-			console.log("currentTitleText: " + currentTitleText);
 		}
 	})
 	.success(function() {
@@ -173,6 +168,8 @@ function queryStoryDetails (titleNumber) {
 
 	console.log(currentTitleText);
 	document.getElementById('currentStoryTitle').innerHTML = currentTitleText;
+	document.getElementById('currentStoryImage').innerHTML = "<img src = '" + currentTitleImage + "' alt='story image'>";
+	// document.getElementById('currentStoryImage').innerHTML = "testing, testing";
 };
 
 /************
