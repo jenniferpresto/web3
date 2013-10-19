@@ -45,6 +45,8 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 	var content = $('#content').val();
 
 	addStoryEntry(author, content);
+
+
 })
 
 /************
@@ -123,7 +125,8 @@ SELECT * FROM narrativetable WHERE (storytitle = 1) ORDER BY (created_at) ASC
 *************/
 
 function queryStoryDetails (titleNumber) {
-	var sqlStoryQuery = "SELECT * FROM " + table_name + " WHERE (storytitle = " + titleNumber + ") ORDER BY (created_at) ASC";
+	console.log("we're querying the story details");
+	var sqlStoryQuery = "SELECT * FROM " + table_name + " WHERE (storytitle = " + titleNumber + ") ORDER BY (created_at) ASC"
 	cartoCommand = cartoUrl + sqlStoryQuery + carto_api_key;
 
 	var storyOutput = [];
@@ -204,6 +207,8 @@ function addStoryEntry (author, content) {
 	.success(function(response) {
 		console.log('table successfully updated');
 		console.log(response);
+		// refresh the page
+		queryStoryDetails(currentTitleNumber);
 	})
 	.error(function () {
 		console.log('Error');
@@ -211,9 +216,6 @@ function addStoryEntry (author, content) {
 	.complete(function() { 
 		console.log('complete');
 	});
-
-	// call function to update page
-	queryStoryDetails(currentTitleNumber);
 }
 
 
