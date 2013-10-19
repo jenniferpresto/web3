@@ -71,6 +71,10 @@ ul {
 	cursor: pointer;
 }
 
+.storyTitle:hover {
+	color: #521820;
+}
+
 .credit, .progress {
 	float: left;
 	width: 30%;

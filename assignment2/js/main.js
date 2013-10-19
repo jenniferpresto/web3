@@ -28,7 +28,6 @@ $('header nav').on('click', 'a', function(event){
     var page = $(this).attr("href");
     $('.page').fadeOut();
     $(page).delay(400).fadeIn();
-
 })
 
 /************
@@ -65,6 +64,27 @@ $('#newStory').click (function (event) { // could also say button#newStory
 })
 
 /************
+Click event for list of titles
+*************/
+
+function addClickToTitles () {
+	// var allTitles = document.getElementsByClassName('storyTitle');
+	// for (var i=0; i < allTitles.length; i++) {
+	// 	allTitles[i].addEventListener("click", function() {
+	// 		console.log("what is happening?");
+	// 		var idStr = allTitles[i].id;
+	// 		console.log("id: " + idStr);
+	// 	})
+	// }
+	// $('.storyTitle').click (function() {
+	//     var testHtml = $(this).attr("html");
+	//     console.log("test html: ", testHtml);
+	// 	var idStr = $(this).attr("id");
+	// 	console.log("id of element: ", idStr);
+	// })
+}
+
+/************
 Querying cartodb for all story titles
 
 This works for querying just one title:
@@ -88,14 +108,17 @@ function queryStoryTitles () {
 			template.removeClass('template');
 			template.addClass('titleList');
 			template.find('.storyTitle').html(titleData.rows[i].title);
+			template.attr('id', 'title' + titleData.rows[i].titlenumber);
 			if (titleData.rows[i].inprogress) {
 				template.find('.progress').html('<i>story in progress</i>');
 			}
+
 			// save title text to global variable
 			if (titleData.rows[i].titlenumber == currentTitleNumber) {
 				currentTitleText = titleData.rows[i].title;
 				currentTitleImage = titleData.rows[i].imageurl;
 			}
+
 			allTitles.push(template);
 		}
 	})
@@ -104,16 +127,16 @@ function queryStoryTitles () {
 		if (numTitles > 0) {
 			$('#titleListAll ul').append(allTitles);
 			$('#titleListAll ul').append("<section class='clearfix'></section>");
-			// note: must put function here, or was getting called first
+			// note: must put queryStoryDetails function here; was otherwise getting called too early
 			queryStoryDetails(currentTitleNumber);
+			addClickToTitles();
 		} else {
 			console.log('no titles yet');
 		}
 	})
-	.error (function() {
-
-	})
-	.complete (function() {});
+	.error (function() {})
+	.complete (function() {
+	});
 }
 
 /************
@@ -162,11 +185,11 @@ function queryStoryDetails (titleNumber) {
 		}
 	})
 	.error(function() {
-		console.log('getJSON error; boo, hoo');
+		console.log('getJSON error under queryStoryDetails; boo, hoo');
 	})
 	.complete(function() {});
 
-	console.log(currentTitleText);
+	// assign title name and image for current story
 	document.getElementById('currentStoryTitle').innerHTML = currentTitleText;
 	document.getElementById('currentStoryImage').innerHTML = "<img src = '" + currentTitleImage + "' alt='story image'>";
 	// document.getElementById('currentStoryImage').innerHTML = "testing, testing";
@@ -254,6 +277,8 @@ function getRandomImage () {
 		}
 	})
 }
+
+
 
 /*********************************************
 Calling certain functions right away
