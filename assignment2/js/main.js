@@ -92,14 +92,16 @@ function queryStoryTitles () {
 			if (titleData.rows[i].inprogress) {
 				template.find('.progress').html('<i>story in progress</i>');
 			}
-
-			allTitles.push(template);
-
+			console.log("title number: " + titleData.rows[i].titlenumber);
+			console.log("currentTitleNumber: " + currentTitleNumber);
 			// save title text to global variable
-			if (titleData.rows.titlenumber == currentTitleNumber) {
-				currentTitleText = titleData.rows.title;
-				currentTitleImage = titleData.rows.imageurl;
+			if (titleData.rows[i].titlenumber == currentTitleNumber) {
+				console.log("if statement firing");
+				currentTitleText = titleData.rows[i].title;
+				currentTitleImage = titleData.rows[i].imageurl;
 			}
+			allTitles.push(template);
+			console.log("currentTitleText: " + currentTitleText);
 		}
 	})
 	.success(function() {
@@ -107,6 +109,8 @@ function queryStoryTitles () {
 		if (numTitles > 0) {
 			$('#titleListAll ul').append(allTitles);
 			$('#titleListAll ul').append("<section class='clearfix'></section>");
+			// note: must put function here, or was getting called first
+			queryStoryDetails(currentTitleNumber);
 		} else {
 			console.log('no titles yet');
 		}
@@ -126,7 +130,6 @@ SELECT * FROM narrativetable WHERE (storytitle = 1) ORDER BY (created_at) ASC
 *************/
 
 function queryStoryDetails (titleNumber) {
-	console.log("we're querying the story details");
 	var sqlStoryQuery = "SELECT * FROM " + table_name + " WHERE (storytitle = " + titleNumber + ") ORDER BY (created_at) ASC"
 	cartoCommand = cartoUrl + sqlStoryQuery + carto_api_key;
 
@@ -135,22 +138,12 @@ function queryStoryDetails (titleNumber) {
 	// console.log ("this is templateA: ", templateA);
 	var query_count; // total returned
 
-	// remove all lines from the story detail page (will put back with getJSON function)
+	// remove all lines from the story detail page (will put back with $.getJSON function)
 	$('.priorDetail').remove();
-	// $('.credit').remove();
-	// // put the template back so it can be replaced
-	// $('.details ul').append('<li class="template"></li>');
 
 	$.getJSON(cartoCommand, function(detailData) {
 		query_count = detailData.rows.length;
 		// console.log(detailData.rows);
-
-		// how would I use $.each for this and access the appropriate text for each one?
-		// $.each(detailData.rows, function () {
-		// 	var template = templateA.clone();
-		// 	template.removeClass('template');
-		// 	template.find('.storyLine').html([need to put stuff here]);
-		// } )
 
 		for (var i = 0, j = detailData.rows.length; i < j; i++) {
 			var template = templateA.clone();
@@ -163,8 +156,6 @@ function queryStoryDetails (titleNumber) {
 
 			storyOutput.push(template);
 		}
-		// console.log("storyOutput length: " + storyOutput.length);
-		// console.log("storyOutput is this: ", storyOutput);
 	})
 	.success(function() {
 		// console.log('getJSON success for storydetails');
@@ -179,6 +170,9 @@ function queryStoryDetails (titleNumber) {
 		console.log('getJSON error; boo, hoo');
 	})
 	.complete(function() {});
+
+	console.log(currentTitleText);
+	document.getElementById('currentStoryTitle').innerHTML = currentTitleText;
 };
 
 /************
@@ -249,15 +243,11 @@ function getRandomImage () {
 				}
 			}
 
-			// console.log("length of animatedGifs: " + animatedGifs.length);
-			// console.log("length of stillImages: " + stillImages.length);
-
 			var imageUrl;
 
 			// prioritize animated GIFs over other possibilities
 			if (animatedGifs.length > 0) {
 				var randomNumber = Math.floor(Math.random() * animatedGifs.length);
-				// console.log(randomNumber);
 				imageUrl = animatedGifs[randomNumber];
 			} else {
 				randomNumber = Math.floor(Math.random() * stillImages.length);
@@ -273,4 +263,3 @@ Calling certain functions right away
 *********************************************/
 
 queryStoryTitles();
-queryStoryDetails(currentTitleNumber);
