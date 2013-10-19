@@ -72,10 +72,9 @@ Click event for list of titles
 
 function addClickToTitles () {
 	var allTitles = document.getElementsByClassName('storyTitle');
-	console.log("all titles object", allTitles);
+	// console.log("all titles object", allTitles);
 	for (var i=0; i < allTitles.length; i++) {
 		allTitles[i].addEventListener("click", function() {
-			console.log("what is happening?");
 			var idStr = allTitles[i].id;
 			alert(allTitles[i].id);
 			console.log("id: " + idStr);
@@ -108,7 +107,6 @@ function queryStoryTitles () {
 	$('.titleList').remove();
 
 	$.getJSON(cartoCommand, function(titleData) {
-		console.log("titleData", titleData);
 		numTitles = titleData.rows.length;
 		for (var i = 0; i < numTitles; i++) {
 			// create line for each entry
@@ -117,7 +115,6 @@ function queryStoryTitles () {
 			template.addClass('titleList');
 			template.find('.storyTitle').html(titleData.rows[i].title);
 			template.attr('id', 'title' + titleData.rows[i].titlenumber);
-			console.log("Id added for " + i);
 			if (titleData.rows[i].inprogress) {
 				template.find('.progress').html('<i>story in progress</i>');
 			}
@@ -133,20 +130,16 @@ function queryStoryTitles () {
 			// find largest titlenumber for global variable largestTitleNumber
 			if (titleData.rows[i].titlenumber > largestTitleNumber) {
 				largestTitleNumber = titleData.rows[i].titlenumber;
-				console.log("titleNumber: " + titleData.rows[i].titlenumber);
 			}
 		}
 	})
 	.success(function() {
-		// console.log("JSON success in getting title details");
 		if (numTitles > 0) {
 			$('#titleListAll ul').append(allTitles);
 			$('#titleListAll ul').append("<section class='clearfix'></section>");
 			// note: must put queryStoryDetails function here; was otherwise getting called too early
 			queryStoryDetails(currentTitleNumber);
 			addClickToTitles();
-			console.log("clicky function called!");
-			console.log("largest title number: " + largestTitleNumber);
 		} else {
 			console.log('no titles yet');
 		}
@@ -170,7 +163,6 @@ function queryStoryDetails (titleNumber) {
 
 	var storyOutput = [];
 	var templateA = $('.details li.template'); // template in HTML
-	// console.log ("this is templateA: ", templateA);
 	var query_count; // total returned
 
 	// remove all lines from the story detail page (will put back with $.getJSON function)
@@ -178,14 +170,12 @@ function queryStoryDetails (titleNumber) {
 
 	$.getJSON(cartoCommand, function(detailData) {
 		query_count = detailData.rows.length;
-		// console.log(detailData.rows);
 
 		for (var i = 0, j = detailData.rows.length; i < j; i++) {
 			var template = templateA.clone();
 			template.removeClass('template');
 			template.addClass('priorDetail');
 			// var temp = template.find('.storyLine');
-			// console.log("temp element: ", temp); // this seems right
 			template.find('.storyLine').html(detailData.rows[i].narrativetext);
 			template.find('.credit').html('<i> written by ' + detailData.rows[i].author + '</i>');
 
@@ -193,7 +183,6 @@ function queryStoryDetails (titleNumber) {
 		}
 	})
 	.success(function() {
-		// console.log('getJSON success for storydetails');
 		if (query_count > 0) {
 			$('.details ul').append(storyOutput);
 			$('.details ul').append("<section class='clearfix'></section>");
@@ -230,15 +219,12 @@ function addStoryEntry (author, content) {
 	var sqlStoryEntry = "INSERT INTO " + table_name + " (author, narrativetext, storytitle) VALUES ( '" + author + "', '" + content + "', '" + currentTitleNumber + "');"
 	writeCommand = cartoUrl + sqlStoryEntry + carto_api_key;
 	
-	// console.log(sqlInsert);
-	console.log(writeCommand);
-
 	$.getJSON(writeCommand, function(data) {
 		console.log(data);
 	})
 	.success(function(response) {
-		console.log('table successfully updated');
-		console.log(response);
+		// console.log('table successfully updated');
+		// console.log(response);
 		// refresh the page
 		queryStoryDetails(currentTitleNumber);
 	})
@@ -251,17 +237,16 @@ function addStoryEntry (author, content) {
 }
 
 function addNewTitle () {
-	var sqlNewTitle = "INSERT INTO " + title_table_name + " (imageurl, inprogress, title, titlenumber) VALUES ( '" + currentTitleImage + "', '" + true + "', 'Test Title " + currentTitleNumber + "', '" + currentTitleNumber + "');"
+	var sqlNewTitle = "INSERT INTO " + title_table_name + " (imageurl, inprogress, title, titlenumber) VALUES ( '" + currentTitleImage + "', '" + true + "', 'Collective Story " + currentTitleNumber + "', '" + currentTitleNumber + "');"
 	writeCommand = cartoUrl + sqlNewTitle + carto_api_key;
 
-	console.log(writeCommand);
 	// actually send the command to cartodb
 	$.getJSON(writeCommand, function(data) {
 		console.log(data);
 	})
 	.success(function(response) {
-		console.log('table successfully updated');
-		console.log(response);
+		// console.log('table successfully updated');
+		// console.log(response);
 		// refresh the page
 		queryStoryTitles();
 	})
@@ -285,7 +270,7 @@ function getRandomImage () {
 		},
 		type: 'GET',
 		success: function(randomList) {
-			console.log(randomList);
+			// console.log(randomList);
 			var animatedCounter = 0; // just to keep track in a way that's easier to print to console
 			var animatedGifs = [];
 			var stillImages = [];
@@ -312,7 +297,7 @@ function getRandomImage () {
 				randomNumber = Math.floor(Math.random() * stillImages.length);
 				imageUrl = stillImages[randomNumber];
 			}			
-			console.log("and the magic URL is... " + imageUrl);
+			// console.log("and the magic URL is... " + imageUrl);
 			currentTitleImage = imageUrl;
 			currentTitleNumber = largestTitleNumber + 1; // setting new title
 			addNewTitle();
@@ -323,7 +308,7 @@ function getRandomImage () {
 
 
 /*********************************************
-Calling one function right away
+Kick things off by calling one function right away
 *********************************************/
 
 queryStoryTitles();
