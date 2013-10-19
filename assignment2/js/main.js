@@ -2,7 +2,7 @@
 Global variables
 *************/
 var largestTitleNumber = 0; // this will be set each time queryStoryTitles is run
-var currentTitleNumber = 3; // starts at arbitrary number for now
+var currentTitleNumber = 7; // starts at arbitrary number for now
 var currentTitleText;
 var currentTitleImage;
 var allTitles = []; // will hold all story titles
@@ -97,7 +97,7 @@ SELECT * FROM titletable WHERE (titlenumber = 1)
 
 function queryStoryTitles () {
 	// var sqlTitleQuery = "SELECT * FROM " + title_table_name + " WHERE (titlenumber = " + currentTitle + ")";
-	var sqlTitleQuery = "SELECT * FROM " + title_table_name;
+	var sqlTitleQuery = "SELECT * FROM " + title_table_name + " ORDER BY (titlenumber) ASC";
 	cartoCommand = cartoUrl + sqlTitleQuery + carto_api_key;
 	var allTitles = [];
 	var templateTitles = $('#titleListAll li.template'); // template in HTML
@@ -116,7 +116,7 @@ function queryStoryTitles () {
 			template.find('.storyTitle').html(titleData.rows[i].title);
 			template.attr('id', 'title' + titleData.rows[i].titlenumber);
 			if (titleData.rows[i].inprogress) {
-				template.find('.progress').html('<i>story in progress</i>');
+				template.find('.littleImage').html('<img src = "' + titleData.rows[i].imageurl + '" alt = "little picture" /> ');
 			}
 
 			// save title text to global variable
@@ -197,7 +197,7 @@ function queryStoryDetails (titleNumber) {
 
 	// assign title name and image for current story
 	document.getElementById('currentStoryTitle').innerHTML = currentTitleText;
-	document.getElementById('currentStoryImage').innerHTML = "<img src = '" + currentTitleImage + "' alt='story image'>";
+	document.getElementById('currentStoryImage').innerHTML = "<img src = '" + currentTitleImage + "' alt='story image' id='currentImageMain'>";
 	// document.getElementById('currentStoryImage').innerHTML = "testing, testing";
 };
 

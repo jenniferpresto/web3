@@ -75,6 +75,15 @@ ul {
 	color: #521820;
 }
 
+#currentImageMain {
+	max-width: 100%;
+}
+
+.littleImage img {
+	max-width: 200px;
+	max-height: 200px;
+}
+
 .credit, .progress {
 	float: left;
 	width: 30%;
