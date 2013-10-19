@@ -62,7 +62,8 @@ $('#newStory').click (function (event) { // could also say button#newStory
 	// query titles table to find out the largest titlenumber
 
 	// run function
-	getRandomImage(); // this sets currentTitleUrl to random picture
+	// getRandomImage calls addNewTitle, which calls queryStoryTitles, which calls queryStoryDetails
+	getRandomImage();
 
 })
 
@@ -115,9 +116,7 @@ function queryStoryTitles () {
 			template.addClass('titleList');
 			template.find('.storyTitle').html(titleData.rows[i].title);
 			template.attr('id', 'title' + titleData.rows[i].titlenumber);
-			if (titleData.rows[i].inprogress) {
-				template.find('.littleImage').html('<img src = "' + titleData.rows[i].imageurl + '" alt = "little picture" /> ');
-			}
+			template.find('.littleImage').html('<img src = "' + titleData.rows[i].imageurl + '" alt = "little picture" /> ');
 
 			// save title text to global variable
 			if (titleData.rows[i].titlenumber == currentTitleNumber) {
@@ -225,7 +224,6 @@ function addStoryEntry (author, content) {
 	.success(function(response) {
 		// console.log('table successfully updated');
 		// console.log(response);
-		// refresh the page
 		queryStoryDetails(currentTitleNumber);
 	})
 	.error(function () {
