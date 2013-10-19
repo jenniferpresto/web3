@@ -1,7 +1,8 @@
 /************
 Global variables
 *************/
-var currentTitleNumber = 3; // starts at whatever the latest story is
+var largestTitleNumber = 0; // this will be set each time queryStoryTitles is run
+var currentTitleNumber = 3; // starts at arbitrary number for now
 var currentTitleText;
 var currentTitleImage;
 var allTitles = []; // will hold all story titles
@@ -58,6 +59,8 @@ $('#newStory').click (function (event) { // could also say button#newStory
 	// stop form from sending/refreshing page
 	event.preventDefault(event);
 
+	// query titles table to find out the largest titlenumber
+
 	// run function
 	getRandomImage();
 
@@ -68,17 +71,19 @@ Click event for list of titles
 *************/
 
 function addClickToTitles () {
-	// var allTitles = document.getElementsByClassName('storyTitle');
-	// for (var i=0; i < allTitles.length; i++) {
-	// 	allTitles[i].addEventListener("click", function() {
-	// 		console.log("what is happening?");
-	// 		var idStr = allTitles[i].id;
-	// 		console.log("id: " + idStr);
-	// 	})
-	// }
+	var allTitles = document.getElementsByClassName('storyTitle');
+	console.log("all titles object", allTitles);
+	for (var i=0; i < allTitles.length; i++) {
+		allTitles[i].addEventListener("click", function() {
+			console.log("what is happening?");
+			var idStr = allTitles[i].id;
+			alert(allTitles[i].id);
+			console.log("id: " + idStr);
+		})
+	}
 	// $('.storyTitle').click (function() {
-	//     var testHtml = $(this).attr("html");
-	//     console.log("test html: ", testHtml);
+	//     // var testHtml = $(this).attr("html");
+	//     // console.log("test html: ", testHtml);
 	// 	var idStr = $(this).attr("id");
 	// 	console.log("id of element: ", idStr);
 	// })
@@ -109,6 +114,7 @@ function queryStoryTitles () {
 			template.addClass('titleList');
 			template.find('.storyTitle').html(titleData.rows[i].title);
 			template.attr('id', 'title' + titleData.rows[i].titlenumber);
+			console.log("Id added for " + i);
 			if (titleData.rows[i].inprogress) {
 				template.find('.progress').html('<i>story in progress</i>');
 			}
@@ -120,6 +126,12 @@ function queryStoryTitles () {
 			}
 
 			allTitles.push(template);
+
+			// find largest titlenumber for global variable largestTitleNumber
+			if (titleData.rows[i].titlenumber > largestTitleNumber) {
+				largestTitleNumber = titleData.rows[i].titlenumber;
+				console.log("titleNumber: " + titleData.rows[i].titlenumber);
+			}
 		}
 	})
 	.success(function() {
@@ -130,6 +142,8 @@ function queryStoryTitles () {
 			// note: must put queryStoryDetails function here; was otherwise getting called too early
 			queryStoryDetails(currentTitleNumber);
 			addClickToTitles();
+			console.log("clicky function called!");
+			console.log("largest title number: " + largestTitleNumber);
 		} else {
 			console.log('no titles yet');
 		}
