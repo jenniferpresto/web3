@@ -6,7 +6,7 @@ var currentTitleNumber = 7; // starts at arbitrary number for now
 var currentTitleText;
 var currentTitleImage;
 var allTitles = []; // will hold all story titles
-var addingNewStory = false;
+var goingToNewStory = false;
 
 // for CartoDB ---------------
 var cartodb_accountname = 'sandlappernyc';
@@ -31,6 +31,15 @@ $('header nav').on('click', 'a', function(event){
     $('.page').fadeOut();
     $(page).delay(400).fadeIn();
 })
+
+function goFromTitleToStoryPage () {
+	$('nav #allNav').removeClass('active');
+	$('nav #currentNav').addClass('active');
+	document.body.scrollTop = document.documentElement.scrollTop = 0;
+    $('.page').fadeOut();
+    $('#current').delay(400).fadeIn();
+    console.log("calling function goFromTitleToStoryPage");
+}
 
 /************
 Click event for addToStory button
@@ -73,21 +82,36 @@ Click event for list of titles
 *************/
 
 function addClickToTitles () {
-	var allTitles = document.getElementsByClassName('storyTitle');
+	//----------------------------------
+	// what's wrong with this javascript?
+
+	// var allTitles = document.getElementsByClassName('titleList');
 	// console.log("all titles object", allTitles);
-	for (var i=0; i < allTitles.length; i++) {
-		allTitles[i].addEventListener("click", function() {
-			var idStr = allTitles[i].id;
-			alert(allTitles[i].id);
-			console.log("id: " + idStr);
-		})
-	}
-	// $('.storyTitle').click (function() {
-	//     // var testHtml = $(this).attr("html");
-	//     // console.log("test html: ", testHtml);
-	// 	var idStr = $(this).attr("id");
-	// 	console.log("id of element: ", idStr);
-	// })
+	// for (var i=0; i < allTitles.length; i++) {
+	// 	console.log("allTitles[" + i + "]: ", allTitles[i]);
+
+	// 	allTitles[i].addEventListener("click", function() {
+	// 		// attempting to get id so can set current story correctly
+	// 		// not yet working
+	// 		var idStr = allTitles[i].id;
+	// 		alert(allTitles[i].id);
+	// 		console.log("id: " + idStr);
+	// 		goFromTitleToStoryPage();
+	// 	})
+	// }
+	//----------------------------------
+
+	$('.titleList').click (function() {
+	    // var testHtml = $(this).attr("html");
+	    // console.log("test html: ", testHtml);
+		var idStr = $(this).attr("id");
+		console.log("id of element: ", idStr);
+		// extract number from id name
+		currentTitleNumber = idStr.replace(/^\D+/g, '');
+		console.log("currentTitleNumber: " + currentTitleNumber);
+		goingToNewStory = true;
+		queryStoryTitles();
+	})
 }
 
 /************
@@ -189,17 +213,17 @@ function queryStoryDetails (titleNumber) {
 		} else {
 			console.log('that story is empty');
 		}
-
 	})
 	.error(function() {
 		console.log('getJSON error under queryStoryDetails; boo, hoo');
 	})
 	.complete(function() {
-		// if we're adding a new story, then switch to the current story page
+		// if we're going to a new story (that is, we've gotten here by clicking
+		// on a story in the title list, then switch to the current story page
 		// then turn the boolean off immediately
 		// the commented-out code breaks the navigation
-		if(addingNewStory) {
-			console.log('addingNewStory is true?');
+		if(goingToNewStory) {
+			goFromTitleToStoryPage();
 			// $(#allNav).removeClass('active');
 			// $(#currentNav).addClass('active');
 			// $('.page').fadeOut();
