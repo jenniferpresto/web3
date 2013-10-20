@@ -142,15 +142,11 @@ p {
 	margin: 1em;
 }
 
-p#bigTitle {
+p.bigTitle {
 	text-align: center;
 	font-size: 150%;
+	margin-left: 1em;
 }
-
-#all p {
-	margin-left: 0;
-}
-
 
 /***********
 Forms
