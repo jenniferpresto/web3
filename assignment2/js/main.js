@@ -2,7 +2,7 @@
 Global variables
 *************/
 var largestTitleNumber = 0; // this will be set each time queryStoryTitles is run
-var currentTitleNumber = 7; // starts at arbitrary number for now
+var currentTitleNumber = 1; // starts at arbitrary number for now
 var currentTitleText;
 var currentTitleImage;
 var allTitles = []; // will hold all story titles
@@ -73,6 +73,7 @@ $('#newStory').click (function (event) { // could also say button#newStory
 
 	// run function
 	// getRandomImage calls addNewTitle, which calls queryStoryTitles, which calls queryStoryDetails
+	goingToNewStory = true;
 	getRandomImage();
 
 })
@@ -340,8 +341,6 @@ function getRandomImage () {
 		}
 	})
 }
-
-
 
 /*********************************************
 Kick things off by calling one function right away

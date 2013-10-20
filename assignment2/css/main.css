@@ -29,7 +29,7 @@ body {
 }
 
 button#newStory {
-	margin-left: 1em;
+
 }
 
 /* form for adding details to a story */
@@ -142,9 +142,15 @@ p {
 	margin: 1em;
 }
 
+p#bigTitle {
+	text-align: center;
+	font-size: 150%;
+}
+
 #all p {
 	margin-left: 0;
 }
+
 
 /***********
 Forms
