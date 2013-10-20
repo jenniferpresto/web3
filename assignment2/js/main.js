@@ -284,7 +284,6 @@ function addNewTitle () {
 		// console.log('table successfully updated');
 		// console.log(response);
 		// refresh the page
-		addNewTitle = true;
 		queryStoryTitles();
 	})
 	.error(function () {
