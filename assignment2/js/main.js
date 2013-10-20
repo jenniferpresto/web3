@@ -6,6 +6,7 @@ var currentTitleNumber = 7; // starts at arbitrary number for now
 var currentTitleText;
 var currentTitleImage;
 var allTitles = []; // will hold all story titles
+var addingNewStory = false;
 
 // for CartoDB ---------------
 var cartodb_accountname = 'sandlappernyc';
@@ -188,11 +189,24 @@ function queryStoryDetails (titleNumber) {
 		} else {
 			console.log('that story is empty');
 		}
+
 	})
 	.error(function() {
 		console.log('getJSON error under queryStoryDetails; boo, hoo');
 	})
-	.complete(function() {});
+	.complete(function() {
+		// if we're adding a new story, then switch to the current story page
+		// then turn the boolean off immediately
+		// the commented-out code breaks the navigation
+		if(addingNewStory) {
+			console.log('addingNewStory is true?');
+			// $(#allNav).removeClass('active');
+			// $(#currentNav).addClass('active');
+			// $('.page').fadeOut();
+			// $('#current').delay(400).fadeIn();
+			addingNewStory = false;
+		}
+	});
 
 	// assign title name and image for current story
 	document.getElementById('currentStoryTitle').innerHTML = currentTitleText;
@@ -237,7 +251,6 @@ function addStoryEntry (author, content) {
 function addNewTitle () {
 	var sqlNewTitle = "INSERT INTO " + title_table_name + " (imageurl, inprogress, title, titlenumber) VALUES ( '" + currentTitleImage + "', '" + true + "', 'Collective Story " + currentTitleNumber + "', '" + currentTitleNumber + "');"
 	writeCommand = cartoUrl + sqlNewTitle + carto_api_key;
-
 	// actually send the command to cartodb
 	$.getJSON(writeCommand, function(data) {
 		console.log(data);
@@ -246,6 +259,7 @@ function addNewTitle () {
 		// console.log('table successfully updated');
 		// console.log(response);
 		// refresh the page
+		addNewTitle = true;
 		queryStoryTitles();
 	})
 	.error(function () {
