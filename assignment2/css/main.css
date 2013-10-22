@@ -116,6 +116,15 @@ ul {
 	max-height: 200px;
 }
 
+.leftImg {
+	max-width: 45%;
+}
+
+.rightImg {
+	float: right;
+	max-width: 45%;
+}
+
 /* Clearfix : couldn't get this to work on details; */
 
 .clearfix:before,

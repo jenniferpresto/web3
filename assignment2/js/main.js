@@ -51,8 +51,8 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 	event.preventDefault(event);
 
 	// create variables from form
-	var author = $('#author').val();
-	var content = $('#content').val();
+	var author = escape($('#author').val());
+	var content = escape($('#content').val());
 
 	addStoryEntry(author, content);
 
