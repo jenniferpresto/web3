@@ -46,17 +46,26 @@ Click event for addToStory button
 *************/
 
 $('#addToStory button').click (function (event) { // could be form#addToStory; space means something _within_ it (like in CSS)
-
 	// stop form from sending/refreshing page
 	event.preventDefault(event);
 
 	// create variables from form
-	var author = escape($('#author').val());
-	var content = escape($('#content').val());
+	var author = $('#author').val();
+	var content = $('#content').val();
+
+	// clean up single quotes to ready for SQL input
+	// (double quotes are generally ok as-is, unless the person goes crazy)
+	author = author.replace("\'", "\'\'");
+	content = content.replace("\'", "\'\'");
+	// author = author.replace("\"", "\'\'");
+	// content = content.replace("\"", "\'\'");
+
+	// replace returns with html "<br>"
+	content = content.replace(/\r?\n/g, '<br>');
+
+	console.log("author: ", author, " content: ", content);
 
 	addStoryEntry(author, content);
-
-	$('input, textarea').val('');
 
 })
 
@@ -255,6 +264,7 @@ http://sandlappernyc.cartodb.com/api/v2/sql?q=INSERT INTO table_name (the_geom, 
 
 function addStoryEntry (author, content) {
 	var sqlStoryEntry = "INSERT INTO " + table_name + " (author, narrativetext, storytitle) VALUES ( '" + author + "', '" + content + "', '" + currentTitleNumber + "');"
+
 	writeCommand = cartoUrl + sqlStoryEntry + carto_api_key;
 	
 	$.getJSON(writeCommand, function(data) {
@@ -264,9 +274,12 @@ function addStoryEntry (author, content) {
 		// console.log('table successfully updated');
 		// console.log(response);
 		queryStoryDetails(currentTitleNumber);
+		$('input, textarea').val('');
 	})
-	.error(function () {
+	.error(function (e) {
 		console.log('Error');
+		alert("Oops, something is a little troubling about what you just wrote. Ampersands? Multiple question marks? You've got to take it a little easy here.\n\nIf you want to be really nice, send Jennifer a message with the text that didn't work. But you can adjust it and try again. Thanks!");
+		alert(e);
 	})
 	.complete(function() { 
 		console.log('complete');
