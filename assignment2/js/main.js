@@ -42,6 +42,18 @@ function goFromTitleToStoryPage () {
 }
 
 /************
+Click event to refresh stories when click "All Stories" tab
+*************/
+
+$('#allNav').click (function (event) {
+	console.log("click on nav tab");
+	event.preventDefault(event);
+	queryStoryTitles();
+	console.log("new addition");
+	})
+
+
+/************
 Click event for addToStory button
 *************/
 
@@ -57,8 +69,12 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 	// (double quotes are generally ok as-is, unless the person goes crazy)
 	author = author.replace("\'", "\'\'");
 	content = content.replace("\'", "\'\'");
-	// author = author.replace("\"", "\'\'");
-	// content = content.replace("\"", "\'\'");
+	// clean up ampersands
+	author = author.replace("&", "%26");
+	content = content.replace("&", "%26");
+	// use uri encoding for question marks to avoid multiple question marks
+	author = author.replace("?", "%3F");
+	content = content.replace("?", "%3F");
 
 	// replace returns with html "<br>"
 	content = content.replace(/\r?\n/g, '<br>');
@@ -238,7 +254,7 @@ function queryStoryDetails (titleNumber) {
 			// $(#currentNav).addClass('active');
 			// $('.page').fadeOut();
 			// $('#current').delay(400).fadeIn();
-			addingNewStory = false;
+			goingToNewStory = false;
 		}
 	});
 
@@ -276,10 +292,9 @@ function addStoryEntry (author, content) {
 		queryStoryDetails(currentTitleNumber);
 		$('input, textarea').val('');
 	})
-	.error(function (e) {
+	.error(function () {
 		console.log('Error');
 		alert("Oops, something is a little troubling about what you just wrote. Ampersands? Multiple question marks? You've got to take it a little easy here.\n\nIf you want to be really nice, send Jennifer a message with the text that didn't work. But you can adjust it and try again. Thanks!");
-		alert(e);
 	})
 	.complete(function() { 
 		console.log('complete');
