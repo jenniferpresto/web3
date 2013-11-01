@@ -397,10 +397,18 @@ function queryStoryDetails (titleNumber) {
 			console.log('that story is empty');
 		}
 
+		// if the story's full, don't show the Add-To-Story container
 		if (!titlesArray[currentTitleNumber-1].inProgress) {
 			$('#addToStory').hide();
 		} else {
 			$('#addToStory').show();
+		}
+
+		// warn if it's the last entry
+		if (titlesArray[currentTitleNumber-1].count == 14) {
+			$('textarea').attr('placeholder', 'What happens next? This is the very last entry for this story! Make it good!');
+		} else {
+			$('textarea').attr('placeholder', 'What happens next?');
 		}
 	})
 	.error(function() {
