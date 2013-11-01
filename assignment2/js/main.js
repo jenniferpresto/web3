@@ -149,12 +149,13 @@ function queryStoryTitles () {
 	// var sqlTitleQuery = "SELECT * FROM " + title_table_name + " WHERE (titlenumber = " + currentTitle + ")";
 	var sqlTitleQuery = "SELECT * FROM " + title_table_name + " ORDER BY (titlenumber) ASC";
 	cartoCommand = cartoUrl + sqlTitleQuery + carto_api_key;
-	var allTitles = [];
 	var templateTitles = $('#titleListAll li.template'); // template in HTML
 	var numTitles;
 
 	// remove all lines from the title list page (will put back with $.getJSON function)
 	$('.titleList').remove();
+	// empty the allTitles array (will be filled back up in $.getJSON function)
+	allTitles.length = 0;
 
 	$.getJSON(cartoCommand, function(titleData) {
 		numTitles = titleData.rows.length;
@@ -182,15 +183,7 @@ function queryStoryTitles () {
 		}
 	})
 	.success(function() {
-		if (numTitles > 0) {
-			$('#titleListAll ul').append(allTitles);
-			$('#titleListAll ul').append("<section class='clearfix'></section>");
-			// note: must put queryStoryDetails function here; was otherwise getting called too early
-			queryStoryDetails(currentTitleNumber);
-			addClickToTitles();
-		} else {
-			console.log('no titles yet');
-		}
+		getTitleMetrics(numTitles);
 	})
 	.error (function() {})
 	.complete (function() {
@@ -326,6 +319,18 @@ function getTitleMetrics(numTitles) {
 			}
 
 			console.log(dateString);
+		}
+
+	})
+	.success(function () {
+		if (numTitles > 0) {
+			$('#titleListAll ul').append(allTitles);
+			$('#titleListAll ul').append("<section class='clearfix'></section>");
+			// note: must put queryStoryDetails function here; was otherwise getting called too early
+			queryStoryDetails(currentTitleNumber);
+			addClickToTitles();
+		} else {
+			console.log('no titles yet');
 		}
 
 	})
@@ -510,5 +515,5 @@ function getRandomImage () {
 Kick things off by calling one function right away
 *********************************************/
 
-// queryStoryTitles();
-getTitleMetrics(6);
+queryStoryTitles();
+// getTitleMetrics(6);
