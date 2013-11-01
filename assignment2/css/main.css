@@ -53,6 +53,11 @@ form#addToStory textarea {
 	height: 4em;
 }
 
+form#addToStory button {
+	display: ;
+	/* will be filled via javascript; whether to show or not */
+}
+
 .template {
 	display: none;
 }
@@ -99,6 +104,16 @@ ul {
 	font-style: italic;
 	font-size: 80%;
 	width: 100%;
+}
+
+.inProgress  {
+	font-weight: bolder;
+	color: #6C594C
+}
+
+.closed {
+	font-weight: bolder;
+	color: #521B20;
 }
 
 #currentImageMain {

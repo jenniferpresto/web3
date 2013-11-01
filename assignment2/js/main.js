@@ -6,6 +6,7 @@ var currentTitleNumber = 1; // starts at arbitrary number for now
 var currentTitleText;
 var currentTitleImage;
 var allTitles = []; // will hold all story titles
+var titlesArray = []; // holds metrics about titles
 var goingToNewStory = false;
 
 // for CartoDB ---------------
@@ -186,8 +187,7 @@ function queryStoryTitles () {
 		getTitleMetrics(numTitles);
 	})
 	.error (function() {})
-	.complete (function() {
-	});
+	.complete (function() {});
 }
 
 /************
@@ -202,20 +202,16 @@ function getTitleMetrics(numTitles) {
 	cartoCommand = cartoUrl + sqlStoryQuery + carto_api_key;
 
 	var storyOutput = [];
-	// array of all the titles (as objects); will fill with metrics
-	var titlesArray = [];
-	// titleObj(count, latestUpdate) {
-	// 	this.count = count;
-	// 	this.latestUpdate = latestUpdate;
-	// }
+	titlesArray.length = 0;
 
-	// create objects on the fly to push into the array with title information 
+	// create objects on the fly to push into titlesArray 
 	for ( var i = 0; i < numTitles; i++ ) {
 		titleObj={
 			number: i+1,
 			count: 0,
 			updated: "0000000000000",
-			allMetrics: " "
+			allMetrics: " ",
+			inProgress: false
 		};
 
 		titlesArray.push(titleObj);
@@ -311,20 +307,27 @@ function getTitleMetrics(numTitles) {
 			var year = readable.getFullYear();
 			var time = readable.toLocaleTimeString();
 
+			if (titlesArray[i].count > 14) {
+				titlesArray[i].inProgress = false;
+			} else {
+				titlesArray[i].inProgress = true;
+			}
+
 			if (titlesArray[i].updated == '0000000000000') {
-				titlesArray[i].allMetrics = 'no entries yet';
+				titlesArray[i].allMetrics = 'no entries yet<br><br><div class="inProgress">story currently in progress</div>';
 			} else {
 				var dateString = 'last updated ' + month + ' ' + date + ', ' + year + '  ' + time;
 				if (titlesArray[i].count == 1) {
-					titlesArray[i].allMetrics = "1 entry<br>" + dateString;
+					titlesArray[i].allMetrics = "1 entry<br>" + dateString + '<br><br><div class="inProgress">story currently in progress</div>';
 				} else {
-					titlesArray[i].allMetrics = titlesArray[i].count + " entries<br>" + dateString;
+					if (titlesArray[i].inProgress) {
+						titlesArray[i].allMetrics = titlesArray[i].count + " entries<br>" + dateString + '<br><br><div class="inProgress">story currently in progress</div>';
+					} else {
+						titlesArray[i].allMetrics = titlesArray[i].count + " entries<br>" + dateString + '<br><br><div class="closed">this story is now closed,<br>but you can still read it</div>'
+					}
 				}
 			}
-
-			console.log(dateString);
 		}
-
 	})
 	.success(function () {
 		if (numTitles > 0) {
@@ -346,9 +349,7 @@ function getTitleMetrics(numTitles) {
 		} else {
 			console.log('no titles yet');
 		}
-
 	})
-
 }
 
 
@@ -394,6 +395,12 @@ function queryStoryDetails (titleNumber) {
 			$('.details ul').append("<section class='clearfix'></section>");
 		} else {
 			console.log('that story is empty');
+		}
+
+		if (!titlesArray[currentTitleNumber-1].inProgress) {
+			$('#addToStory').hide();
+		} else {
+			$('#addToStory').show();
 		}
 	})
 	.error(function() {
