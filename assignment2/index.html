@@ -14,8 +14,8 @@
 		<header>
 			<nav>
 				<a id="homeNav" href="#home">Home</a>
-				<a id="currentNav" href="#current">Current Story</a>
 				<a id="allNav" href="#all">All Stories</a>
+				<a id="currentNav" href="#current">Current Story</a>
 			</nav>
 		</header>
 		
@@ -36,6 +36,20 @@
 				</section> <!-- end of titleList template -->
 			</section> <!-- end of home page -->
 
+			<!-- All titles page -->
+			<section id="all" class="page">
+				<p class="bigTitle">All stories</p>
+				<section id="titleListAll">
+					<ul>
+						<li class="template">
+							<div class="titleAndMetrics"><div class="storyTitle">template</div><div class="storyMetrics">story metrics here</div></div><div class="littleImage"></div>
+
+						</li>
+					</ul>
+				<div id="newStoryButtonContainer"><button id="newStory" class="newStory">Start a brand new story</button></div>
+				</section> <!-- end of titleListDetail template -->
+			</section> <!-- end of titles page -->
+
 			<!-- Current story to be displayed -->
 			<section id="current" class="page">
 				<p id="currentStoryTitle" class="bigTitle">No Story Yet! (Go to the "All Stories" tab to create the first one!)</p>
@@ -54,21 +68,8 @@
 					<textarea id="content" name="content" placeholder="What happens next? (For now, please refrain from using quotation marks or apostrophes. Revel in the arbitrary limitations!)"></textarea>
 					<button class="newText">Submit your development to this story</button>
 				</form>
-			</section> <!-- end of inProgress page -->
+			</section> <!-- end of current story page -->
 
-			<!-- All titles page -->
-			<section id="all" class="page">
-				<p class="bigTitle">All stories</p>
-				<section id="titleListAll">
-					<ul>
-						<li class="template">
-							<div class="titleAndMetrics"><div class="storyTitle">template</div><div class="storyMetrics">story metrics here</div></div><div class="littleImage"></div>
-
-						</li>
-					</ul>
-				<div id="newStoryButtonContainer"><button id="newStory" class="newStory">Start a brand new story</button></div>
-				</section> <!-- end of titleListDetail template -->
-			</section> <!-- end of titles page -->
 			<br><br>
 			<section id = "images"><img src = "img/decoration-bottom-left.png" class="leftImg"/><img src = "img/decoration-bottom-right.png"  class="rightImg"/></section> 
 
