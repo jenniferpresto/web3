@@ -46,11 +46,9 @@ Click event to refresh stories when click "All Stories" tab
 *************/
 
 $('#allNav').click (function (event) {
-	console.log("click on nav tab");
 	event.preventDefault(event);
 	queryStoryTitles();
-	console.log("new addition");
-	})
+})
 
 
 /************
@@ -198,6 +196,65 @@ function queryStoryTitles () {
 	.complete (function() {
 	});
 }
+
+/************
+Querying cartodb for story metrics for all stories
+
+*************/
+
+function getTitleMetrics(numTitles) {
+
+	var sqlStoryQuery = "SELECT * FROM " + table_name + " ORDER BY (created_at) ASC"
+
+	cartoCommand = cartoUrl + sqlStoryQuery + carto_api_key;
+
+	var storyOutput = [];
+	// array of all the titles (as objects); will fill with metrics
+	var titlesArray = [];
+	// titleObj(count, latestUpdate) {
+	// 	this.count = count;
+	// 	this.latestUpdate = latestUpdate;
+	// }
+
+
+	// create objects on the fly to push into the array with title information 
+	for ( var i = 0; i < numTitles; i++ ) {
+		titleObj={
+			number: i+1,
+			count: 0,
+			updated: "0000000000000"
+		};
+
+		titlesArray.push(titleObj);
+	}
+
+	$.getJSON(cartoCommand, function(detailData) {
+		var allStories = [];
+		allStories = detailData.rows;
+
+		for ( var i = 0, j = detailData.rows.length; i < j; i++ ) {
+			var titleNum = allStories[i].storytitle;
+			console.log("story title: ", allStories[i].storytitle);
+
+			// count how many lines of the story there are
+			titlesArray[titleNum-1].count++;			
+			// get the latest date
+			// var date = Date.parse(allStories[i].created_at);
+			// console.log(date);
+
+			if(allStories[i].created_at > titlesArray[titleNum-1].updated) {
+				titlesArray[titleNum - 1].updated = allStories[i].created_at;
+			}
+		}
+
+		console.log(titlesArray);
+	})
+
+}
+
+
+
+
 
 /************
 Querying cartodb for story details
@@ -373,4 +430,5 @@ function getRandomImage () {
 Kick things off by calling one function right away
 *********************************************/
 
-queryStoryTitles();
+// queryStoryTitles();
+getTitleMetrics(6);
