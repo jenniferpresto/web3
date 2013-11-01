@@ -28,8 +28,13 @@ body {
 	height: auto;
 }
 
-button#newStory {
+div#newStoryButtonContainer {
+	width: 100%;
+	text-align: center;
+}
 
+button#newStory {
+	text-align: center;
 }
 
 /* form for adding details to a story */
@@ -72,16 +77,28 @@ ul {
 	margin-top: 1em;
 }
 
-.storyTitle {
+.titleAndMetrics {
 	display: inline-block;
 	float: left;
 	clear: left;
 	width: 60%;
+}
+
+.storyTitle {
+	display: block;
+	width: 100%;
 	cursor: pointer;
 }
 
 .storyTitle:hover {
 	color: #521820;
+}
+
+.storyMetrics {
+	display: block;
+	font-style: italic;
+	font-size: 80%;
+	width: 100%;
 }
 
 #currentImageMain {

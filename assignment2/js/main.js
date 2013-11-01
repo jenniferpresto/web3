@@ -209,13 +209,13 @@ function getTitleMetrics(numTitles) {
 	// 	this.latestUpdate = latestUpdate;
 	// }
 
-
 	// create objects on the fly to push into the array with title information 
 	for ( var i = 0; i < numTitles; i++ ) {
 		titleObj={
 			number: i+1,
 			count: 0,
-			updated: "0000000000000"
+			updated: "0000000000000",
+			allMetrics: " "
 		};
 
 		titlesArray.push(titleObj);
@@ -311,11 +311,15 @@ function getTitleMetrics(numTitles) {
 			var year = readable.getFullYear();
 			var time = readable.toLocaleTimeString();
 
-			var dateString;
 			if (titlesArray[i].updated == '0000000000000') {
-				dateString = 'no entries yet'
+				titlesArray[i].allMetrics = 'no entries yet';
 			} else {
-				dateString = 'last updated ' + month + ' ' + date + ', ' + year + '  ' + time;
+				var dateString = 'last updated ' + month + ' ' + date + ', ' + year + '  ' + time;
+				if (titlesArray[i].count == 1) {
+					titlesArray[i].allMetrics = "1 entry<br>" + dateString;
+				} else {
+					titlesArray[i].allMetrics = titlesArray[i].count + " entries<br>" + dateString;
+				}
 			}
 
 			console.log(dateString);
@@ -324,8 +328,18 @@ function getTitleMetrics(numTitles) {
 	})
 	.success(function () {
 		if (numTitles > 0) {
+			// append array created in queryStoryTitles
 			$('#titleListAll ul').append(allTitles);
 			$('#titleListAll ul').append("<section class='clearfix'></section>");
+
+			// add the metrics for each title under its name
+			for (var i=0; i < numTitles; i++) {
+				var idString = "li#title"+(i+1);
+				var tmpTitle = $(idString).find('.storyMetrics').html(titlesArray[i].allMetrics);
+				console.log(tmpTitle);
+				console.log(titlesArray[i].allMetrics);
+			}
+
 			// note: must put queryStoryDetails function here; was otherwise getting called too early
 			queryStoryDetails(currentTitleNumber);
 			addClickToTitles();
