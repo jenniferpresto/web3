@@ -145,7 +145,7 @@ ul {
 	float: left;
 	width: 37%;
 	font-size: 90%;
-	padding: 0.25em; /* to make sure space between story line and author name */
+	/* padding: 0.25em; /* to make sure space between story line and author name */
 }
 
 .littleImage img {
