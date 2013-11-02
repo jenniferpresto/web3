@@ -39,7 +39,6 @@ function goFromTitleToStoryPage () {
 	document.body.scrollTop = document.documentElement.scrollTop = 0;
     $('.page').fadeOut();
     $('#current').delay(400).fadeIn();
-    console.log("calling function goFromTitleToStoryPage");
 }
 
 /************
@@ -78,10 +77,7 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 	// replace returns with html "<br>"
 	content = content.replace(/\r?\n/g, '<br>');
 
-	console.log("author: ", author, " content: ", content);
-
 	addStoryEntry(author, content);
-
 })
 
 /************
@@ -130,10 +126,8 @@ function addClickToTitles () {
 	    // var testHtml = $(this).attr("html");
 	    // console.log("test html: ", testHtml);
 		var idStr = $(this).attr("id");
-		console.log("id of element: ", idStr);
 		// extract number from id name
 		currentTitleNumber = idStr.replace(/^\D+/g, '');
-		console.log("currentTitleNumber: " + currentTitleNumber);
 		goingToNewStory = true;
 		queryStoryTitles();
 	})
@@ -200,8 +194,6 @@ function getTitleMetrics(numTitles) {
 	var sqlStoryQuery = "SELECT * FROM " + table_name + " ORDER BY (created_at) ASC"
 
 	cartoCommand = cartoUrl + sqlStoryQuery + carto_api_key;
-
-	var storyOutput = [];
 	titlesArray.length = 0;
 
 	// create objects on the fly to push into titlesArray 
@@ -223,7 +215,6 @@ function getTitleMetrics(numTitles) {
 
 		for ( var i = 0, j = detailData.rows.length; i < j; i++ ) {
 			var titleNum = allStories[i].storytitle;
-			console.log("story title: ", allStories[i].storytitle);
 
 			// count how many lines of the story there are
 			titlesArray[titleNum-1].count++;			
@@ -335,12 +326,22 @@ function getTitleMetrics(numTitles) {
 			$('#titleListAll ul').append(allTitles);
 			$('#titleListAll ul').append("<section class='clearfix'></section>");
 
+			var inProgressCount = 0;
 			// add the metrics for each title under its name
 			for (var i=0; i < numTitles; i++) {
 				var idString = "li#title"+(i+1);
 				var tmpTitle = $(idString).find('.storyMetrics').html(titlesArray[i].allMetrics);
-				console.log(tmpTitle);
-				console.log(titlesArray[i].allMetrics);
+
+				if(titlesArray[i].inProgress) {
+					inProgressCount++;
+				}
+			}
+
+			// if five or more stories are in-progress, don't show the new story button
+			if (inProgressCount > 4) {
+				$('#newStoryButtonContainer').hide();
+			} else {
+				$('#newStoryButtonContainer').show();
 			}
 
 			// note: must put queryStoryDetails function here; was otherwise getting called too early
@@ -393,8 +394,6 @@ function queryStoryDetails (titleNumber) {
 		if (query_count > 0) {
 			$('.details ul').append(storyOutput);
 			$('.details ul').append("<section class='clearfix'></section>");
-		} else {
-			console.log('that story is empty');
 		}
 
 		// if the story's full, don't show the Add-To-Story container
@@ -455,20 +454,21 @@ function addStoryEntry (author, content) {
 	writeCommand = cartoUrl + sqlStoryEntry + carto_api_key;
 	
 	$.getJSON(writeCommand, function(data) {
-		console.log(data);
+		// console.log(data);
 	})
 	.success(function(response) {
 		// console.log('table successfully updated');
 		// console.log(response);
-		queryStoryDetails(currentTitleNumber);
+ 		// queryStoryDetails(currentTitleNumber);
+ 		queryStoryTitles();
 		$('input, textarea').val('');
 	})
 	.error(function () {
 		console.log('Error');
-		alert("Oops, something is a little troubling about what you just wrote. Ampersands? Multiple question marks? You've got to take it a little easy here.\n\nIf you want to be really nice, send Jennifer a message with the text that didn't work. But you can adjust it and try again. Thanks!");
+		alert("Oops, something is a little troubling about what you just wrote. Multiple question marks, perhaps? You've got to take it a little easy here.\n\nIf you want to be really nice, send Jennifer a message with the text that didn't work. But you can adjust it and try again. Thanks!");
 	})
 	.complete(function() { 
-		console.log('complete');
+		// console.log('complete');
 	});
 }
 
@@ -545,4 +545,3 @@ Kick things off by calling one function right away
 *********************************************/
 
 queryStoryTitles();
-// getTitleMetrics(6);

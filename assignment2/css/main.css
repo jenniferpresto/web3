@@ -80,6 +80,11 @@ ul {
 	clear: left;
 	width: 60%;
 	margin-top: 1em;
+	word-wrap: break-word;
+}
+
+.storyLine img {
+	max-width: 100%;
 }
 
 .titleAndMetrics {
