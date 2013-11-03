@@ -9,14 +9,6 @@ var allTitles = []; // will hold all story titles
 var titlesArray = []; // holds metrics about titles
 var goingToNewStory = false;
 
-// for CartoDB ---------------
-var cartodb_accountname = 'sandlappernyc';
-var cartoUrl = 'http://sandlappernyc.cartodb.com/api/v2/sql?q=';
-var carto_api_key = '&api_key=b3c3e1286652256b3974e4e06e7c6811f5f16101';
-var table_name = 'narrativetable';
-var title_table_name = 'titletable';
-var cartoCommand;
-
 
 /************
 Page navigation
@@ -65,8 +57,8 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 
 	// clean up single quotes to ready for SQL input
 	// (double quotes are generally ok as-is, unless the person goes crazy)
-	author = author.replace("\'", "\'\'");
-	content = content.replace("\'", "\'\'");
+	author = author.replace("\'", "%27");
+	content = content.replace("\'", "%27");
 	// clean up ampersands
 	author = author.replace("&", "%26");
 	content = content.replace("&", "%26");
@@ -132,6 +124,15 @@ function addClickToTitles () {
 		queryStoryTitles();
 	})
 }
+
+// CartoDB ---------------
+var cartodb_accountname = 'sandlappernyc';
+var cartoUrl = 'http://sandlappernyc.cartodb.com/api/v2/sql?q=';
+var carto_api_key = '&api_key=b3c3e1286652256b3974e4e06e7c6811f5f16101';
+var table_name = 'narrativetable';
+var title_table_name = 'titletable';
+var cartoCommand;
+
 
 /************
 Querying cartodb for all story titles
