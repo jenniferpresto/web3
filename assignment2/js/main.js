@@ -57,19 +57,21 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 
 	// clean up single quotes to ready for SQL input
 	// (double quotes are generally ok as-is, unless the person goes crazy)
-	author = author.replace("\'", "%27");
-	content = content.replace("\'", "%27");
+	author = author.replace(/'/g, "''");
+	content = content.replace(/'/g, "''");
 	// clean up ampersands
-	author = author.replace("&", "%26");
-	content = content.replace("&", "%26");
+	author = author.replace(/\&/g, '%26');
+	content = content.replace(/\&/g, '%26');
 	// use uri encoding for question marks to avoid multiple question marks
-	author = author.replace("?", "%3F");
-	content = content.replace("?", "%3F");
+	author = author.replace(/\?/g, "%3F");
+	content = content.replace(/\?/g, "%3F");
 
 	// replace returns with html "<br>"
 	content = content.replace(/\r?\n/g, '<br>');
 
 	addStoryEntry(author, content);
+
+	console.log(author, content);
 })
 
 /************
