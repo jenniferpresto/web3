@@ -70,8 +70,6 @@ $('#addToStory button').click (function (event) { // could be form#addToStory; s
 	content = content.replace(/\r?\n/g, '<br>');
 
 	addStoryEntry(author, content);
-
-	console.log(author, content);
 })
 
 /************
@@ -301,7 +299,7 @@ function getTitleMetrics(numTitles) {
 			var year = readable.getFullYear();
 			var time = readable.toLocaleTimeString();
 
-			if (titlesArray[i].count > 14) {
+			if (titlesArray[i].count > 5) {
 				titlesArray[i].inProgress = false;
 			} else {
 				titlesArray[i].inProgress = true;
@@ -407,7 +405,7 @@ function queryStoryDetails (titleNumber) {
 		}
 
 		// warn if it's the last entry
-		if (titlesArray[currentTitleNumber-1].count == 14) {
+		if (titlesArray[currentTitleNumber-1].count == 5) {
 			$('textarea').attr('placeholder', 'What happens next? This is the very last entry for this story! Make it good!');
 		} else {
 			$('textarea').attr('placeholder', 'What happens next?');
