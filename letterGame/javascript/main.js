@@ -1,3 +1,15 @@
+/*****************************
+Box 2D physics
+Helpful tutorials and sites:
+
+Nice walkthrough for beginners:
+http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
+
+Good code on interacting with mouse (joint interaction based heavily on this):
+http://code.google.com/p/box2dweb/
+(see downloads for actual code)
+
+*****************************/
 
 window.onload = function () {
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -13,26 +25,6 @@ window.onload = function () {
                   };
     })();
 
-    // Following method wraps the Box2d Code inside a function-variable so that it's not called until
-    // the Box2D library has loaded. Does not seem to be necessary, but keeping it here,
-    // commented out, for reference. 
-
-    // make sure scripts load in time
-    // http://stackoverflow.com/questions/950087/how-to-include-a-javascript-file-in-another-javascript-file
-    // function loadScript(url, callback) {
-    // 	var head = document.getElementsByTagName('head')[0];
-    // 	var box2DScript = document.createElement('script');
-    // 	box2DScript.type = 'text/javascript';
-    // 	box2DScript.src = url;
-
-    // 	box2DScript.onreadystatechange = callback;
-    // 	box2DScript.onload = callback;
-
-    // 	// load the script
-    // 	head.appendChild(box2DScript);
-    // }
-
-    // var Box2DCode = function () { 
 	var     b2Vec2 = Box2D.Common.Math.b2Vec2
         ,   b2AABB = Box2D.Collision.b2AABB
         ,   b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -51,16 +43,7 @@ window.onload = function () {
     var world = new b2World (
     	new b2Vec2(0, 9.8), true); // gravity and allowing sleep
 
-    var SCALE = 30;
-
-    // short functions just to make conversion to b2d units a little less bulky
-    function pixels(pixels) {
-    	return pixels / SCALE;
-    }
-
-    function halfPixels(pixels) {
-		return pixels / SCALE * 0.5;    	
-    }
+    var SCALE = 30.0;
 
     var canvas = document.getElementById("canvas");
 
@@ -99,21 +82,16 @@ window.onload = function () {
     fixDef.shape.SetAsBox(halfPixels(10), halfPixels(canvas.height));
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-    // add some random bodies to the world
+    // add 26 randomly sized rectangles to the world
     bodyDef.type = b2Body.b2_dynamicBody;
-    for (var i = 0; i < 10; i++) {
-    	if (Math.random() > 0.5) {
-    		fixDef.shape = new b2PolygonShape;
-    		var randWidth = Math.random() * 20 + 30; 	// number btwn 30 and 50 
-    		var randHeight = Math.random() * 20 + 30; 	// number btwn 30 and 50
-    		console.log ("shape # " + i + ": Width: " + randWidth + " Height: " + randHeight);
-    		fixDef.shape.SetAsBox (halfPixels(randWidth), halfPixels(randHeight)); // half-width, half-height
-    	} else {
-    		var randRadius = Math.random() * 10 + 15; 	// number btwn 15 and 25
-    		fixDef.shape = new b2CircleShape (pixels(randRadius)); // radius
-    		console.log ("shape # " + i + ": randRadius: " + randRadius);
-    	}
+    for (var i = 0; i < 26; i++) {
+        // create rectangles
+		fixDef.shape = new b2PolygonShape;
+		var randWidth = Math.random() * 30 + 20; 	// number btwn 20 and 50 
+		var randHeight = Math.random() * 30 + 20; 	// number btwn 20 and 50
+		fixDef.shape.SetAsBox (halfPixels(randWidth), halfPixels(randHeight)); // half-width, half-height
 
+        // determine their positions
     	var randPosX = (Math.random() * (canvas.width - 50)) + 25; // give 25-pixel buffer on each side
     	var randPosY = Math.random() * canvas.height * 0.5; // top half of screen only
     	bodyDef.position.x = pixels(randPosX);
@@ -130,9 +108,136 @@ window.onload = function () {
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
     world.SetDebugDraw(debugDraw);
 
-    // create the animation loop
+    // add mouse variables
+    var mouseX, mouseY, mouseVec, mouseIsDown, selectedBody, mouseJoint;
+
+    // transpose for the canvas position
+    var canvasPosition = getElementPosition(document.getElementById("canvas"));
+    console.log("canvas top-left corner: ", canvasPosition);
+
+    /*****************************
+    Add listeners
+    *****************************/
+
+    document.addEventListener("mousedown", function(e) {
+        mouseIsDown = true;
+        // console.log(e);
+        handleMouseMove(e);
+        document.addEventListener("mousemove", handleMouseMove, true);
+    }, true);
+
+    document.addEventListener("mouseup", function() {
+        document.removeEventListener("mousemove", handleMouseMove, true);
+        mouseIsDown = false;
+        mouseX = undefined;
+        mouseY = undefined;
+    }, true);
+
+    // refigure canvas position if window is resized
+    window.addEventListener("resize", function() {
+        canvasPosition = getElementPosition(document.getElementById("canvas"));
+        console.log("resizing! recalibrating!");
+    }, true);
+
+
+    /*****************************
+    Defined functions
+    *****************************/
+
+    // short functions just to make conversion to b2d units a little less bulky
+    function pixels(pixels) {
+        return pixels / SCALE;
+    }
+
+    function halfPixels(pixels) {
+        return pixels / SCALE * 0.5;        
+    }
+
+    function handleMouseMove(e) {
+        mouseX = e.clientX - canvasPosition.x;
+        mouseY = e.clientY - canvasPosition.y;
+        console.log("Mouse X: ", mouseX, ", Mouse Y: ", mouseY);
+        getBodyAtMouse();
+    }
+
+    function getBodyAtMouse () {
+        mouseVec = new b2Vec2(pixels(mouseX), pixels(mouseY));
+        // Note: aabb stands for "axis-aligned bounding box"; used for testing collisions
+        var aabb = new b2AABB();
+        aabb.lowerBound.Set(pixels(mouseX) - 0.001, pixels(mouseY) - 0.001); 
+        aabb.upperBound.Set(pixels(mouseX) + 0.001, pixels(mouseY) + 0.001);
+
+        // look for overlapping shapes
+        selectedBody = null;
+        world.QueryAABB(getBodyCB, aabb);
+        return selectedBody;
+    }
+
+    function getBodyCB (fixture) {
+
+        if (fixture.GetBody().GetType() != b2Body.b2_staticBody) {
+            if(fixture.GetShape().TestPoint(fixture.GetBody().GetTransform(), mouseVec)) {
+                selectedBody = fixture.GetBody();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // function to calculate position of elements;
+    // used for canvas element to get correct mouse positions
+    function getElementPosition(element) {
+        var elem = element;
+        var tagname = "";
+        var x = 0;
+        var y = 0;
+        while((typeof(elem) == "object") && (typeof(elem.tagName) != "undefined")) {
+            x += elem.offsetLeft;
+            y += elem.offsetTop;
+            tagname = elem.tagName.toUpperCase();
+
+            if (tagname == 'BODY') {
+                elem = 0;
+            }
+
+            if (typeof(elem) == "object") {
+                if(typeof(elem.offsetParent) == "object") {
+                    elem = elem.offsetParent;
+                }
+            }
+        }
+        return {x: x, y: y};
+    }
+
+    /*****************************
+    Animation loop
+    *****************************/
+
     function update() {
-	    // stepping through the simulation
+        if (mouseIsDown && (!mouseJoint)) {
+            var body = getBodyAtMouse();
+            if(body) {
+                var md = new b2MouseJointDef();
+                md.bodyA = world.GetGroundBody();
+                md.bodyB = body;
+                md.target.Set(pixels(mouseX), pixels(mouseY));
+                md.collideConnected = true;
+                md.maxForce = 300 * body.GetMass();
+                mouseJoint = world.CreateJoint(md);
+                body.SetAwake(true);
+            }
+        }
+
+        if (mouseJoint) {
+            if(mouseIsDown) {
+                mouseJoint.SetTarget(new b2Vec2(pixels(mouseX), pixels(mouseY)));
+            } else {
+                world.DestroyJoint(mouseJoint);
+                mouseJoint = null;
+            }
+        }
+
+        // stepping through the simulation
 	    // parameters are time step, velocity iteration count, and position iteration count 
 	    world.Step(1/60, 10, 10);
 	    world.DrawDebugData();
@@ -141,9 +246,6 @@ window.onload = function () {
 	    requestAnimFrame(update);
     }
 
-    // fire it up with one call
+    // fire it all up with the first call
     requestAnimFrame(update);
-	// }
-
-    // loadScript('javascript/Box2dWeb-2.1.a.3.min.js', Box2DCode);
 }
