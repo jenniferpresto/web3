@@ -9,3 +9,9 @@ https://canvas.newschool.edu
 
 Assignment 1:
 Responsive page
+
+Assignment 2:
+Collective Storytelling Site
+
+Final assignment:
+letterGame
