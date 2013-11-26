@@ -83,6 +83,8 @@ window.onload = function () {
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 
     // add 26 randomly sized rectangles to the world
+    var NUMRECTS = 26;
+    var letters = [];
     bodyDef.type = b2Body.b2_dynamicBody;
     for (var i = 0; i < 26; i++) {
         // create rectangles
@@ -96,7 +98,9 @@ window.onload = function () {
     	var randPosY = Math.random() * canvas.height * 0.5; // top half of screen only
     	bodyDef.position.x = pixels(randPosX);
     	bodyDef.position.y = pixels(randPosY);
-    	world.CreateBody(bodyDef).CreateFixture(fixDef);
+        var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+        letters.push(newBody);
     }
 
     // draw the world
@@ -121,9 +125,12 @@ window.onload = function () {
 
     document.addEventListener("mousedown", function(e) {
         mouseIsDown = true;
-        // console.log(e);
         handleMouseMove(e);
         document.addEventListener("mousemove", handleMouseMove, true);
+        for (var i = 0; i < letters.length; i++) {
+            console.log("Box # ", i, ": ", letters[i].m_body.GetAngle());
+            console.log("Object itself: ", letters[i]);
+        }
     }, true);
 
     document.addEventListener("mouseup", function() {
@@ -242,6 +249,16 @@ window.onload = function () {
 	    world.Step(1/60, 10, 10);
 	    world.DrawDebugData();
 	    world.ClearForces();
+
+        // draw numbers on the canvas
+        for (var i = 0; i < letters.length; i++) {
+            var context = canvas.getContext("2d");
+            // console.log(letters[i].m_body.GetPosition());
+            var x = letters[i].m_body.GetPosition().x;
+            var y = letters[i].m_body.GetPosition().y;
+            context.strokeText(i.toString(), x*SCALE, y*SCALE);
+        }
+
 
 	    requestAnimFrame(update);
     }
