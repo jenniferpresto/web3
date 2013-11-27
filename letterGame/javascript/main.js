@@ -174,7 +174,7 @@ window.onload = function () {
     function handleMouseMove(e) {
         mouseX = e.clientX - canvasPosition.x;
         mouseY = e.clientY - canvasPosition.y;
-        console.log("Mouse X: ", mouseX, ", Mouse Y: ", mouseY);
+        // console.log("Mouse X: ", mouseX, ", Mouse Y: ", mouseY);
         getBodyAtMouse();
     }
 
@@ -232,7 +232,7 @@ window.onload = function () {
     // Lord knows, I can't find a simpler way
     function getBoxCoordinates (boxObject) {
         var rot = boxObject.m_body.GetAngle();
-        // the [2] vertex always has two positive numbers
+        // m_vertices[2] always has positive numbers for x and y
         var x2 = boxObject.m_shape.m_vertices[2].x;
         var y2 = boxObject.m_shape.m_vertices[2].y;
         var w = x2 * 2.0 * SCALE;
@@ -278,8 +278,10 @@ window.onload = function () {
 	    world.ClearForces();
 
         var context = canvas.getContext('2d');
+
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
+            // draw un-rotated rectangles
             context.beginPath();
             context.rect(getBoxCoordinates(boxArray[i]).x, getBoxCoordinates(boxArray[i]).y, getBoxCoordinates(boxArray[i]).width, getBoxCoordinates(boxArray[i]).height);
             context.fillStyle = 'yellow';
@@ -287,18 +289,29 @@ window.onload = function () {
             context.lineWidth = 3;
             context.strokeStyle = 'black';
             context.stroke();
+
+            // draw images
+            context.save();
+            var boxWidth = getBoxCoordinates(boxArray[i]).width;
+            var boxHeight = getBoxCoordinates(boxArray[i]).height;
+            var boxX = getBoxCoordinates(boxArray[i]).x + 0.5 * boxWidth;
+            var boxY = getBoxCoordinates(boxArray[i]).y + 0.5 * boxHeight;
+            context.translate(boxX, boxY);
+            context.rotate(getBoxCoordinates(boxArray[i]).rotation);
+            context.drawImage(imageArray[i], -0.5 * boxWidth, -0.5 * boxHeight, boxWidth, boxHeight);
+            // context.drawImage(imageArray[i], 0, 0, boxWidth, boxHeight);
+            context.restore();
         }
 
-        // draw numbers on the canvas
+        // draw numbers on the canvas to label the boxes
         // for (var i = 0; i < boxArray.length; i++) {
         //     // console.log(boxArray[i].m_body.GetPosition());
+        //     context.fillStyle = 'black';
+        //     context.lineWidth = 1;
         //     var x = boxArray[i].m_body.GetPosition().x;
         //     var y = boxArray[i].m_body.GetPosition().y;
         //     context.strokeText(i.toString(), x*SCALE, y*SCALE);
         // }
-
-
-
 	    requestAnimFrame(update);
     }
 
