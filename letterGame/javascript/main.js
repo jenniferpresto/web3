@@ -39,14 +39,16 @@ window.onload = function () {
         ,   b2World = Box2D.Dynamics.b2World
         ,   b2MassData = Box2D.Collision.Shapes.b2MassData
         ,   b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-        ,   b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+        // ,   b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
         ,   b2DebugDraw = Box2D.Dynamics.b2DebugDraw
         ,   b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
+        ,   b2ContactListener = Box2D.Dynamics.b2ContactListener
         ;
 
     // Box2D world
     var world = new b2World (
     	new b2Vec2(0, 9.8), true); // gravity and allowing sleep
+
 
     var SCALE = 30.0;
 
@@ -64,7 +66,7 @@ window.onload = function () {
     var bodyDef = new b2BodyDef;
     bodyDef.type = b2Body.b2_staticBody;
 
-    // define the ground
+    // define the floor
     // position is in the center of the object
     bodyDef.position.x = halfPixels(canvas.width);
     bodyDef.position.y = pixels(canvas.height);
@@ -73,26 +75,31 @@ window.onload = function () {
     // uses half-height and half-width as dimensions
     fixDef.shape = new b2PolygonShape;
     fixDef.shape.SetAsBox(halfPixels(canvas.width), halfPixels(10));
-    // then add the ground to the world
-    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    // then add the floor to the world
+    var floor = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    floor.SetUserData("floor");
 
     // do the same for the other walls
     // ceiling
     bodyDef.position.x = halfPixels(canvas.width);
     bodyDef.position.y = 0.0;
     fixDef.shape.SetAsBox(halfPixels(canvas.width), halfPixels(10));
-    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    var ceiling = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    ceiling.SetUserData("ceiling");
 
     // left wall
     bodyDef.position.x = 0;
     bodyDef.position.y = halfPixels(canvas.height);
     fixDef.shape.SetAsBox(halfPixels(10), halfPixels(canvas.height));
-    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    var leftWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    leftWall.SetUserData("leftWall");
+
     // right wall
     bodyDef.position.x = pixels(canvas.width);
     bodyDef.position.y = halfPixels(canvas.height);
     fixDef.shape.SetAsBox(halfPixels(10), halfPixels(canvas.height));
-    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    var rightWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    rightWall.SetUserData("rightWall");
 
     // add 26 randomly sized rectangles to the world
     var NUMBOXES = 5;
@@ -113,8 +120,10 @@ window.onload = function () {
     	var randPosY = Math.random() * canvas.height * 0.5; // top half of screen only
     	bodyDef.position.x = pixels(randPosX);
     	bodyDef.position.y = pixels(randPosY);
-        var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
 
+        var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        newBody.SetUserData("box" + i.toString()); // giving it a custom ID number, essentially
+        console.log("[", i, "]: ", newBody);
         boxArray.push(newBody);
 
         // load the images
@@ -152,6 +161,9 @@ window.onload = function () {
             console.log("Object itself: ", boxArray[i]);
             // console.log(getBoxCoordinates(boxArray[i]));
         }
+        // console.log("Box 0 contact list: ", boxArray[0].m_body.GetContactList());
+        console.log("getBodyList: ", world.GetBodyList());
+
     }, true);
 
     document.addEventListener("mouseup", function() {
@@ -166,6 +178,23 @@ window.onload = function () {
         canvasPosition = getElementPosition(document.getElementById("canvas"));
         console.log("resizing! recalibrating!");
     }, true);
+
+    // // add collision listener for the world
+    // var contactListener = new b2ContactListener;
+    // contactListener.BeginContact = function(contact) {
+    //     console.log(contact.GetFixtureA().GetBody().GetUserData());
+    //     console.log(contact.GetFixtureB().GetBody().GetUserData()); 
+    // }
+    // contactListener.EndContact = function(contact) {
+    //     console.log(contact.GetFixtureA().GetBody().GetUserData());
+    // }
+    // contactListener.PostSolve = function(contact, impulse) {
+        
+    // }
+    // contactListener.PreSolve = function(contact, oldManifold) {
+
+    // }
+    // world.SetContactListener(contactListener);
 
 
     /*****************************
@@ -281,7 +310,7 @@ window.onload = function () {
             var restingCount = 0;
             for (var i = 0; i < boxArray.length; i++) {
                 if (!boxArray[i].m_body.IsAwake()) {
-                    console.log("isAwake for [", i, "]: ", boxArray[i].m_body.IsAwake());
+                    // console.log("isAwake for [", i, "]: ", boxArray[i].m_body.IsAwake());
                     restingCount++;
                 }
             }
@@ -292,6 +321,7 @@ window.onload = function () {
             }
         }
 
+        // add mousejoints when pick up a box 
         if (mouseIsDown && (!mouseJoint)) {
             var body = getBodyAtMouse();
             if(body) {
