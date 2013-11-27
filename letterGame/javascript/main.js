@@ -26,6 +26,9 @@ window.onload = function () {
                   };
     })();
 
+    // boolean to determine if boxes have rested so shelves can be created
+    var gameStarted = false;
+
     // Box2D variables
 	var     b2Vec2 = Box2D.Common.Math.b2Vec2
         ,   b2AABB = Box2D.Collision.b2AABB
@@ -48,6 +51,7 @@ window.onload = function () {
     var SCALE = 30.0;
 
     var canvas = document.getElementById("canvas");
+    var context = canvas.getContext('2d');
 
     // set up generic fixDef and bodyDef variables
     // fixture definitions are attributes
@@ -61,7 +65,6 @@ window.onload = function () {
     bodyDef.type = b2Body.b2_staticBody;
 
     // define the ground
-
     // position is in the center of the object
     bodyDef.position.x = halfPixels(canvas.width);
     bodyDef.position.y = pixels(canvas.height);
@@ -70,7 +73,14 @@ window.onload = function () {
     // uses half-height and half-width as dimensions
     fixDef.shape = new b2PolygonShape;
     fixDef.shape.SetAsBox(halfPixels(canvas.width), halfPixels(10));
-    // add the ground to the world
+    // then add the ground to the world
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+    // do the same for the other walls
+    // ceiling
+    bodyDef.position.x = halfPixels(canvas.width);
+    bodyDef.position.y = 0.0;
+    fixDef.shape.SetAsBox(halfPixels(canvas.width), halfPixels(10));
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 
     // left wall
@@ -94,8 +104,8 @@ window.onload = function () {
     for (var i = 0; i < NUMBOXES; i++) {
         // create rectangles
 		fixDef.shape = new b2PolygonShape;
-		var randWidth = Math.random() * 30 + 20; 	// number btwn 20 and 50 
-		var randHeight = Math.random() * 30 + 20; 	// number btwn 20 and 50
+		var randWidth = Math.random() * 50 + 50; 	// number btwn 50 and 100 
+		var randHeight = Math.random() * 50 + 50; 	// number btwn 50 and 100
 		fixDef.shape.SetAsBox (halfPixels(randWidth), halfPixels(randHeight)); // half-width, half-height
 
         // determine their positions
@@ -139,8 +149,8 @@ window.onload = function () {
         for (var i = 0; i < boxArray.length; i++) {
             // console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
             // console.log("Transform: ", boxArray[i].m_body.GetTransform());
-            // console.log("Object itself: ", boxArray[i]);
-            console.log(getBoxCoordinates(boxArray[i]));
+            console.log("Object itself: ", boxArray[i]);
+            // console.log(getBoxCoordinates(boxArray[i]));
         }
     }, true);
 
@@ -243,11 +253,45 @@ window.onload = function () {
         return {rotation: rot, width: w, height: h, x: topLeftX, y: topLeftY};
     }
 
+    // this will create the shelves at the beginning of the game after
+    // the blocks have settled
+    function createShelves () {
+        bodyDef.type = b2Body.b2_staticBody;
+
+        // left side
+        bodyDef.position.x = pixels(canvas.width / 4.0);
+        bodyDef.position.y = pixels(canvas.height / 1.5);
+        fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
+        world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+        // right side
+        bodyDef.position.x = pixels(canvas.width * 3.0 / 4.0);
+        bodyDef.position.y = pixels(canvas.height / 1.5);
+        fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
+        world.CreateBody(bodyDef).CreateFixture(fixDef);
+    }
+
     /*****************************
     Animation loop
     *****************************/
 
     function update() {
+        // determine when to create shelves
+        if (!gameStarted) {
+            var restingCount = 0;
+            for (var i = 0; i < boxArray.length; i++) {
+                if (!boxArray[i].m_body.IsAwake()) {
+                    console.log("isAwake for [", i, "]: ", boxArray[i].m_body.IsAwake());
+                    restingCount++;
+                }
+            }
+
+            if (restingCount == boxArray.length) {
+                createShelves();
+                gameStarted = true;
+            }
+        }
+
         if (mouseIsDown && (!mouseJoint)) {
             var body = getBodyAtMouse();
             if(body) {
@@ -277,18 +321,18 @@ window.onload = function () {
 	    world.DrawDebugData();
 	    world.ClearForces();
 
-        var context = canvas.getContext('2d');
+        // context.clearRect(0, 0, canvas.width, canvas.height);
 
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
             // draw un-rotated rectangles
-            context.beginPath();
-            context.rect(getBoxCoordinates(boxArray[i]).x, getBoxCoordinates(boxArray[i]).y, getBoxCoordinates(boxArray[i]).width, getBoxCoordinates(boxArray[i]).height);
-            context.fillStyle = 'yellow';
-            context.fill();
-            context.lineWidth = 3;
-            context.strokeStyle = 'black';
-            context.stroke();
+            // context.beginPath();
+            // context.rect(getBoxCoordinates(boxArray[i]).x, getBoxCoordinates(boxArray[i]).y, getBoxCoordinates(boxArray[i]).width, getBoxCoordinates(boxArray[i]).height);
+            // context.fillStyle = 'yellow';
+            // context.fill();
+            // context.lineWidth = 3;
+            // context.strokeStyle = 'black';
+            // context.stroke();
 
             // draw images
             context.save();
