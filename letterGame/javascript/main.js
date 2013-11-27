@@ -14,6 +14,7 @@ http://code.google.com/p/box2dweb/
 window.onload = function () {
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     // via http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
+
     window.requestAnimFrame = (function(){
           return  window.requestAnimationFrame       || 
                   window.webkitRequestAnimationFrame || 
@@ -25,6 +26,7 @@ window.onload = function () {
                   };
     })();
 
+    // Box2D variables
 	var     b2Vec2 = Box2D.Common.Math.b2Vec2
         ,   b2AABB = Box2D.Collision.b2AABB
         ,   b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -83,10 +85,13 @@ window.onload = function () {
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 
     // add 26 randomly sized rectangles to the world
-    var NUMRECTS = 26;
-    var letters = [];
+    var NUMBOXES = 5;
+    var boxArray = [];
+    // array of images
+    var imageArray = [];
+
     bodyDef.type = b2Body.b2_dynamicBody;
-    for (var i = 0; i < 26; i++) {
+    for (var i = 0; i < NUMBOXES; i++) {
         // create rectangles
 		fixDef.shape = new b2PolygonShape;
 		var randWidth = Math.random() * 30 + 20; 	// number btwn 20 and 50 
@@ -100,7 +105,11 @@ window.onload = function () {
     	bodyDef.position.y = pixels(randPosY);
         var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-        letters.push(newBody);
+        boxArray.push(newBody);
+
+        // load the images
+        imageArray[i] = new Image();
+        imageArray[i].src = '../letterGame/imgs/test' + i.toString() + '.png';
     }
 
     // draw the world
@@ -127,9 +136,11 @@ window.onload = function () {
         mouseIsDown = true;
         handleMouseMove(e);
         document.addEventListener("mousemove", handleMouseMove, true);
-        for (var i = 0; i < letters.length; i++) {
-            console.log("Box # ", i, ": ", letters[i].m_body.GetAngle());
-            console.log("Object itself: ", letters[i]);
+        for (var i = 0; i < boxArray.length; i++) {
+            // console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
+            // console.log("Transform: ", boxArray[i].m_body.GetTransform());
+            // console.log("Object itself: ", boxArray[i]);
+            console.log(getBoxCoordinates(boxArray[i]));
         }
     }, true);
 
@@ -216,6 +227,22 @@ window.onload = function () {
         return {x: x, y: y};
     }
 
+    // get tope-left corner, width, and height of each box (in pixels)
+    // To be used with drawing images.
+    // Lord knows, I can't find a simpler way
+    function getBoxCoordinates (boxObject) {
+        var rot = boxObject.m_body.GetAngle();
+        // the [2] vertex always has two positive numbers
+        var x2 = boxObject.m_shape.m_vertices[2].x;
+        var y2 = boxObject.m_shape.m_vertices[2].y;
+        var w = x2 * 2.0 * SCALE;
+        var h = y2 * 2.0 * SCALE;
+        var topLeftX = (boxObject.m_body.GetPosition().x - x2) * SCALE;
+        var topLeftY = (boxObject.m_body.GetPosition().y - y2) * SCALE;
+
+        return {rotation: rot, width: w, height: h, x: topLeftX, y: topLeftY};
+    }
+
     /*****************************
     Animation loop
     *****************************/
@@ -250,14 +277,26 @@ window.onload = function () {
 	    world.DrawDebugData();
 	    world.ClearForces();
 
-        // draw numbers on the canvas
-        for (var i = 0; i < letters.length; i++) {
-            var context = canvas.getContext("2d");
-            // console.log(letters[i].m_body.GetPosition());
-            var x = letters[i].m_body.GetPosition().x;
-            var y = letters[i].m_body.GetPosition().y;
-            context.strokeText(i.toString(), x*SCALE, y*SCALE);
+        var context = canvas.getContext('2d');
+        // draw test boxes, rotated appropropriately
+        for (var i = 0; i < boxArray.length; i++) {
+            context.beginPath();
+            context.rect(getBoxCoordinates(boxArray[i]).x, getBoxCoordinates(boxArray[i]).y, getBoxCoordinates(boxArray[i]).width, getBoxCoordinates(boxArray[i]).height);
+            context.fillStyle = 'yellow';
+            context.fill();
+            context.lineWidth = 3;
+            context.strokeStyle = 'black';
+            context.stroke();
         }
+
+        // draw numbers on the canvas
+        // for (var i = 0; i < boxArray.length; i++) {
+        //     // console.log(boxArray[i].m_body.GetPosition());
+        //     var x = boxArray[i].m_body.GetPosition().x;
+        //     var y = boxArray[i].m_body.GetPosition().y;
+        //     context.strokeText(i.toString(), x*SCALE, y*SCALE);
+        // }
+
 
 
 	    requestAnimFrame(update);
