@@ -445,15 +445,6 @@ window.onload = function () {
 
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
-            // draw un-rotated rectangles
-            // context.beginPath();
-            // context.rect(getBoxCoordinates(boxArray[i]).x, getBoxCoordinates(boxArray[i]).y, getBoxCoordinates(boxArray[i]).width, getBoxCoordinates(boxArray[i]).height);
-            // context.fillStyle = 'yellow';
-            // context.fill();
-            // context.lineWidth = 3;
-            // context.strokeStyle = 'black';
-            // context.stroke();
-
             // draw images
             context.save();
             var boxWidth = getBoxCoordinates(boxArray[i]).width;
@@ -466,16 +457,6 @@ window.onload = function () {
             // context.drawImage(imageArray[i], 0, 0, boxWidth, boxHeight);
             context.restore();
         }
-
-        // draw numbers on the canvas to label the boxes
-        // for (var i = 0; i < boxArray.length; i++) {
-        //     // console.log(boxArray[i].m_body.GetPosition());
-        //     context.fillStyle = 'black';
-        //     context.lineWidth = 1;
-        //     var x = boxArray[i].m_body.GetPosition().x;
-        //     var y = boxArray[i].m_body.GetPosition().y;
-        //     context.strokeText(i.toString(), x*SCALE, y*SCALE);
-        // }
 
         if (gameWon) {
             context.fillStyle = 'black';
