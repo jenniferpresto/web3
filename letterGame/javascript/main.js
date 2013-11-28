@@ -28,6 +28,8 @@ window.onload = function () {
 
     // boolean to determine if boxes have rested so shelves can be created
     var gameStarted = false;
+    var checkRun = false;
+    var gameWon = false;
 
     // Box2D variables
 	var     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -122,8 +124,8 @@ window.onload = function () {
     	bodyDef.position.y = pixels(randPosY);
 
         var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        newBody.SetUserData("box" + i.toString()); // giving it a custom ID number, essentially
-        console.log("[", i, "]: ", newBody);
+        newBody.SetUserData("box" + i.toString()); // giving it a custom ID, essentially
+        // console.log("[", i, "]: ", newBody);
         boxArray.push(newBody);
 
         // load the images
@@ -145,7 +147,7 @@ window.onload = function () {
 
     // transpose for the canvas position
     var canvasPosition = getElementPosition(document.getElementById("canvas"));
-    console.log("canvas top-left corner: ", canvasPosition);
+    // console.log("canvas top-left corner: ", canvasPosition);
 
     /*****************************
     Add listeners
@@ -158,11 +160,14 @@ window.onload = function () {
         for (var i = 0; i < boxArray.length; i++) {
             // console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
             // console.log("Transform: ", boxArray[i].m_body.GetTransform());
-            console.log("Object itself: ", boxArray[i]);
+            console.log("Object [", i," ]: ", boxArray[i]);
             // console.log(getBoxCoordinates(boxArray[i]));
         }
         // console.log("Box 0 contact list: ", boxArray[0].m_body.GetContactList());
-        console.log("getBodyList: ", world.GetBodyList());
+        // console.log("getBodyList: ", world.GetBodyList());
+        
+        // reset ability to check stacking order next time objects come to rest
+        checkRun = false;
 
     }, true);
 
@@ -266,7 +271,7 @@ window.onload = function () {
         return {x: x, y: y};
     }
 
-    // get tope-left corner, width, and height of each box (in pixels)
+    // get top-left corner, width, and height of each box (in pixels)
     // To be used with drawing images.
     // Lord knows, I can't find a simpler way
     function getBoxCoordinates (boxObject) {
@@ -291,13 +296,79 @@ window.onload = function () {
         bodyDef.position.x = pixels(canvas.width / 4.0);
         bodyDef.position.y = pixels(canvas.height / 1.5);
         fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-        world.CreateBody(bodyDef).CreateFixture(fixDef);
+        var leftShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        leftShelf.SetUserData("leftShelf");
 
         // right side
         bodyDef.position.x = pixels(canvas.width * 3.0 / 4.0);
         bodyDef.position.y = pixels(canvas.height / 1.5);
         fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-        world.CreateBody(bodyDef).CreateFixture(fixDef);
+        var rightShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        rightShelf.SetUserData("rightShelf");
+    }
+
+    // function called any time all boxes at rest
+    // checks stacking order of the boxes
+    function checkStackingOrder () {
+        console.log("checkingStackOrder");
+        var correctBoxes = 0;
+        for ( var i = 0; i < boxArray.length; i++ ) {
+            // check box 0
+            if (i==0) {
+                var contactList0 = boxArray[i].m_body.m_contactList;
+                console.log("contactList0: ", contactList0);
+                // box0 should have two (and only two) contacts;
+                // they should be the left shelf and box 1
+                if (contactList0.contact && contactList0.next) {
+                    if (contactList0.next.next == null) {
+                        // now check to make sure one of the contacts is the left shelf,
+                        // and the other is box1
+                        console.log(contactList0.contact.m_fixtureA.m_userData);
+                        if ((contactList0.contact.m_fixtureA.m_userData == 'leftShelf' ||contactList0.contact.m_fixtureB.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureA.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureB.m_userData == 'leftShelf') && (contactList0.contact.m_fixtureA.m_userData == 'box1' ||contactList0.contact.m_fixtureB.m_userData == 'box1' || contactList0.next.contact.m_fixtureA.m_userData == 'box1' || contactList0.next.contact.m_fixtureB.m_userData == 'box1') ) {
+                            console.log('so far so good with box 0!');
+                            correctBoxes++;
+                        }
+                    }
+                }
+            }
+
+            // check boxes 1 through 3
+            if (i > 0 && i < boxArray.length-1) {
+                var contactList = boxArray[i].m_body.m_contactList;
+                console.log("contactList[", i, "]: ", contactList);
+                // middle boxes should have two (and only two) contacts;
+                // they should be the the box below and the one above
+                if (contactList.contact && contactList.next) {
+                    if (contactList.next.next == null) {
+                        // now check to make sure one of the contacts is box below,
+                        // and the other is box above
+                        var boxBelow = 'box' + (i-1).toString();
+                        var boxAbove = 'box' + (i+1).toString();
+                        if ((contactList.contact.m_fixtureA.m_userData == boxBelow ||contactList.contact.m_fixtureB.m_userData == boxBelow || contactList.next.contact.m_fixtureA.m_userData == boxBelow || contactList.next.contact.m_fixtureB.m_userData == boxBelow) && (contactList.contact.m_fixtureA.m_userData == boxAbove ||contactList.contact.m_fixtureB.m_userData == boxAbove || contactList.next.contact.m_fixtureA.m_userData == boxAbove || contactList.next.contact.m_fixtureB.m_userData == boxAbove) ) {
+                            console.log('so far so good with box ', i, '!');
+                            correctBoxes++;
+                        }
+                    }
+                }
+            }
+
+            // check box 5
+            if (i == boxArray.length-1) {
+                var contactList = boxArray[i].m_body.m_contactList;
+                var boxBelow = 'box' + (i-1).toString();
+                if (contactList.contact && contactList.next == null) {
+                    if (contactList.contact.m_fixtureA.m_userData == boxBelow ||contactList.contact.m_fixtureB.m_userData == boxBelow) {
+                            correctBoxes++;
+                    }
+                }
+
+            }
+        }
+        if (correctBoxes == boxArray.length) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*****************************
@@ -306,6 +377,7 @@ window.onload = function () {
 
     function update() {
         // determine when to create shelves
+        // (when all boxes resting for the first time)
         if (!gameStarted) {
             var restingCount = 0;
             for (var i = 0; i < boxArray.length; i++) {
@@ -318,6 +390,24 @@ window.onload = function () {
             if (restingCount == boxArray.length) {
                 createShelves();
                 gameStarted = true;
+            }
+        }
+
+        // if all boxes resting, check to see if stacked correctly
+        if (gameStarted && !checkRun) {
+            var restingCount = 0;
+            for (var i = 0; i < boxArray.length; i++) {
+                if (!boxArray[i].m_body.IsAwake()) {
+                    restingCount++;
+                }
+            }
+            console.log("resting count: ", restingCount);
+            if (restingCount == boxArray.length) {
+                console.log("all at rest");
+                checkRun = true;
+                if (checkStackingOrder()) {
+                    gameWon = true;
+                }
             }
         }
 
@@ -386,7 +476,15 @@ window.onload = function () {
         //     var y = boxArray[i].m_body.GetPosition().y;
         //     context.strokeText(i.toString(), x*SCALE, y*SCALE);
         // }
-	    requestAnimFrame(update);
+
+        if (gameWon) {
+            context.fillStyle = 'black';
+            context.lineWidth = 1;
+            context.strokeText("You win!", canvas.width/2, canvas.height/2);            
+        }
+        if (!gameWon) {
+            requestAnimFrame(update);
+        }
     }
 
     // fire it all up with the first call
