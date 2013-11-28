@@ -31,6 +31,7 @@ window.onload = function () {
     var checkRun = false;
     var gameWon = false;
 
+
     // Box2D variables
 	var     b2Vec2 = Box2D.Common.Math.b2Vec2
         ,   b2AABB = Box2D.Collision.b2AABB
@@ -51,6 +52,7 @@ window.onload = function () {
     var world = new b2World (
     	new b2Vec2(0, 9.8), true); // gravity and allowing sleep
 
+    var leftShelf, rightShelf;
 
     var SCALE = 30.0;
 
@@ -104,7 +106,7 @@ window.onload = function () {
     rightWall.SetUserData("rightWall");
 
     // add 26 randomly sized rectangles to the world
-    var NUMBOXES = 5;
+    var NUMBOXES = 3;
     var boxArray = [];
     // array of images
     var imageArray = [];
@@ -158,16 +160,14 @@ window.onload = function () {
         handleMouseMove(e);
         document.addEventListener("mousemove", handleMouseMove, true);
         for (var i = 0; i < boxArray.length; i++) {
-            // console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
+            console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
             // console.log("Transform: ", boxArray[i].m_body.GetTransform());
-            console.log("Object [", i," ]: ", boxArray[i]);
+            // console.log("Object [", i," ]: ", boxArray[i]);
             // console.log(getBoxCoordinates(boxArray[i]));
         }
         // console.log("Box 0 contact list: ", boxArray[0].m_body.GetContactList());
         // console.log("getBodyList: ", world.GetBodyList());
         
-        // reset ability to check stacking order next time objects come to rest
-        checkRun = false;
 
     }, true);
 
@@ -176,6 +176,8 @@ window.onload = function () {
         mouseIsDown = false;
         mouseX = undefined;
         mouseY = undefined;
+        // reset ability to check stacking order next time objects come to rest
+        checkRun = false;
     }, true);
 
     // refigure canvas position if window is resized
@@ -296,14 +298,14 @@ window.onload = function () {
         bodyDef.position.x = pixels(canvas.width / 4.0);
         bodyDef.position.y = pixels(canvas.height / 1.5);
         fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-        var leftShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        leftShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
         leftShelf.SetUserData("leftShelf");
 
         // right side
         bodyDef.position.x = pixels(canvas.width * 3.0 / 4.0);
         bodyDef.position.y = pixels(canvas.height / 1.5);
         fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-        var rightShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        rightShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
         rightShelf.SetUserData("rightShelf");
     }
 
@@ -317,16 +319,20 @@ window.onload = function () {
             if (i==0) {
                 var contactList0 = boxArray[i].m_body.m_contactList;
                 console.log("contactList0: ", contactList0);
-                // box0 should have two (and only two) contacts;
-                // they should be the left shelf and box 1
-                if (contactList0.contact && contactList0.next) {
-                    if (contactList0.next.next == null) {
-                        // now check to make sure one of the contacts is the left shelf,
-                        // and the other is box1
-                        console.log(contactList0.contact.m_fixtureA.m_userData);
-                        if ((contactList0.contact.m_fixtureA.m_userData == 'leftShelf' ||contactList0.contact.m_fixtureB.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureA.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureB.m_userData == 'leftShelf') && (contactList0.contact.m_fixtureA.m_userData == 'box1' ||contactList0.contact.m_fixtureB.m_userData == 'box1' || contactList0.next.contact.m_fixtureA.m_userData == 'box1' || contactList0.next.contact.m_fixtureB.m_userData == 'box1') ) {
-                            console.log('so far so good with box 0!');
-                            correctBoxes++;
+
+                // first, check to see if the box is rotated correctly
+                if (testAngle(boxArray[i])) {
+
+                    // box0 should have two (and only two) contacts;
+                    // they should be the left shelf and box 1
+                    if (contactList0.contact && contactList0.next) {
+                        if (contactList0.next.next == null) {
+                            // now check to make sure one of the contacts is the left shelf,
+                            // and the other is box1
+                            if ((contactList0.contact.m_fixtureA.m_userData == 'leftShelf' ||contactList0.contact.m_fixtureB.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureA.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureB.m_userData == 'leftShelf') && (contactList0.contact.m_fixtureA.m_userData == 'box1' ||contactList0.contact.m_fixtureB.m_userData == 'box1' || contactList0.next.contact.m_fixtureA.m_userData == 'box1' || contactList0.next.contact.m_fixtureB.m_userData == 'box1') ) {
+                                console.log('so far so good with box 0!');
+                                correctBoxes++;
+                            }
                         }
                     }
                 }
@@ -336,17 +342,21 @@ window.onload = function () {
             if (i > 0 && i < boxArray.length-1) {
                 var contactList = boxArray[i].m_body.m_contactList;
                 console.log("contactList[", i, "]: ", contactList);
-                // middle boxes should have two (and only two) contacts;
-                // they should be the the box below and the one above
-                if (contactList.contact && contactList.next) {
-                    if (contactList.next.next == null) {
-                        // now check to make sure one of the contacts is box below,
-                        // and the other is box above
-                        var boxBelow = 'box' + (i-1).toString();
-                        var boxAbove = 'box' + (i+1).toString();
-                        if ((contactList.contact.m_fixtureA.m_userData == boxBelow ||contactList.contact.m_fixtureB.m_userData == boxBelow || contactList.next.contact.m_fixtureA.m_userData == boxBelow || contactList.next.contact.m_fixtureB.m_userData == boxBelow) && (contactList.contact.m_fixtureA.m_userData == boxAbove ||contactList.contact.m_fixtureB.m_userData == boxAbove || contactList.next.contact.m_fixtureA.m_userData == boxAbove || contactList.next.contact.m_fixtureB.m_userData == boxAbove) ) {
-                            console.log('so far so good with box ', i, '!');
-                            correctBoxes++;
+
+                // first, check to see if the box is rotated correctly
+                if (testAngle(boxArray[i])) {
+                    // middle boxes should have two (and only two) contacts;
+                    // they should be the the box below and the one above
+                    if (contactList.contact && contactList.next) {
+                        if (contactList.next.next == null) {
+                            // now check to make sure one of the contacts is box below,
+                            // and the other is box above
+                            var boxBelow = 'box' + (i-1).toString();
+                            var boxAbove = 'box' + (i+1).toString();
+                            if ((contactList.contact.m_fixtureA.m_userData == boxBelow ||contactList.contact.m_fixtureB.m_userData == boxBelow || contactList.next.contact.m_fixtureA.m_userData == boxBelow || contactList.next.contact.m_fixtureB.m_userData == boxBelow) && (contactList.contact.m_fixtureA.m_userData == boxAbove ||contactList.contact.m_fixtureB.m_userData == boxAbove || contactList.next.contact.m_fixtureA.m_userData == boxAbove || contactList.next.contact.m_fixtureB.m_userData == boxAbove) ) {
+                                console.log('so far so good with box ', i, '!');
+                                correctBoxes++;
+                            }
                         }
                     }
                 }
@@ -356,15 +366,48 @@ window.onload = function () {
             if (i == boxArray.length-1) {
                 var contactList = boxArray[i].m_body.m_contactList;
                 var boxBelow = 'box' + (i-1).toString();
-                if (contactList.contact && contactList.next == null) {
-                    if (contactList.contact.m_fixtureA.m_userData == boxBelow ||contactList.contact.m_fixtureB.m_userData == boxBelow) {
-                            correctBoxes++;
+
+                // first, check to see if the box is rotated correctly
+                if (testAngle(boxArray[i])) {
+
+                    if (contactList.contact && contactList.next == null) {
+                        if (contactList.contact.m_fixtureA.m_userData == boxBelow ||contactList.contact.m_fixtureB.m_userData == boxBelow) {
+                                console.log('and box ', i, ' is fine, too!')
+                                correctBoxes++;
+                        }
                     }
                 }
-
             }
         }
+
         if (correctBoxes == boxArray.length) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function testAngle(boxObject) {
+        var rotation = getBoxCoordinates(boxObject).rotation;
+
+        // if box has rotated many times,
+        // bring the rotation down to a number between -2PI and 2PI
+        if (rotation > 0.5) {
+            while (rotation > (Math.PI * 2.0) - 0.01) {
+                rotation -= Math.PI * 2.0;
+            }
+        }
+
+        if (rotation < -0.5) {
+            while (rotation < -(Math.PI * 2.0) + 0.01) {
+                rotation += Math.PI * 2.0;
+            }
+        }
+
+        console.log('this object: ', boxObject);
+        console.log('this object: ', boxObject.m_userData, ', newly calculated rotation: ', rotation);
+        // if it's straight up and down, return true
+        if (rotation > -0.01 && rotation < 0.01) {
             return true;
         } else {
             return false;
@@ -401,13 +444,15 @@ window.onload = function () {
                     restingCount++;
                 }
             }
+
             console.log("resting count: ", restingCount);
+
             if (restingCount == boxArray.length) {
                 console.log("all at rest");
-                checkRun = true;
                 if (checkStackingOrder()) {
                     gameWon = true;
                 }
+                checkRun = true;
             }
         }
 
@@ -438,10 +483,22 @@ window.onload = function () {
         // stepping through the simulation
 	    // parameters are time step, velocity iteration count, and position iteration count 
 	    world.Step(1/60, 10, 10);
-	    world.DrawDebugData();
+	    // world.DrawDebugData();
 	    world.ClearForces();
 
-        // context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // draw shelves
+        if (gameStarted) {
+            context.beginPath();
+            context.rect(getBoxCoordinates(leftShelf).x, getBoxCoordinates(leftShelf).y, getBoxCoordinates(leftShelf).width, getBoxCoordinates(leftShelf).height);
+            context.rect(getBoxCoordinates(rightShelf).x, getBoxCoordinates(rightShelf).y, getBoxCoordinates(rightShelf).width, getBoxCoordinates(rightShelf).height);
+            context.fillStyle = 'yellow';
+            context.fill();
+            context.lineWidth = 1;
+            context.strokeStyle = 'black';
+            context.stroke();
+        }
 
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
@@ -454,11 +511,13 @@ window.onload = function () {
             context.translate(boxX, boxY);
             context.rotate(getBoxCoordinates(boxArray[i]).rotation);
             context.drawImage(imageArray[i], -0.5 * boxWidth, -0.5 * boxHeight, boxWidth, boxHeight);
-            // context.drawImage(imageArray[i], 0, 0, boxWidth, boxHeight);
             context.restore();
         }
 
         if (gameWon) {
+            context.fillStyle = 'rgba(100, 100, 100, 0.5)';
+            context.rect(0, 0, canvas.width, canvas.height);
+            context.fill();
             context.fillStyle = 'black';
             context.lineWidth = 1;
             context.strokeText("You win!", canvas.width/2, canvas.height/2);            
