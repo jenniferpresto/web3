@@ -4,6 +4,7 @@
 }
 
 #canvas {
+	float: left;
 	background-color: #333333;
 	border: 1px solid black;
 }

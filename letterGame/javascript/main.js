@@ -5,7 +5,7 @@ Helpful tutorials and sites:
 Nice walkthrough for beginners:
 http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
 
-Good code on interacting with mouse (joint interaction based heavily on this):
+Good code on interacting with mouse (mouse interaction based heavily on this):
 http://code.google.com/p/box2dweb/
 (see downloads for actual code)
 
@@ -59,6 +59,10 @@ window.onload = function () {
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext('2d');
 
+    var canvas2 = document.getElementById("canvas2");
+    var context = canvas2.getContext('2d');
+
+
     // set up generic fixDef and bodyDef variables
     // fixture definitions are attributes
     var fixDef = new b2FixtureDef;
@@ -87,7 +91,7 @@ window.onload = function () {
     // ceiling
     bodyDef.position.x = halfPixels(canvas.width);
     bodyDef.position.y = 0.0;
-    fixDef.shape.SetAsBox(halfPixels(canvas.width), halfPixels(10));
+    fixDef.shape.SetAsBox(halfPixels(canvas.width), halfPixels(0));
     var ceiling = world.CreateBody(bodyDef).CreateFixture(fixDef);
     ceiling.SetUserData("ceiling");
 
@@ -105,8 +109,15 @@ window.onload = function () {
     var rightWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
     rightWall.SetUserData("rightWall");
 
+    // pedestal
+    bodyDef.position.x = halfPixels(canvas.width);
+    bodyDef.position.y = pixels(canvas.height - 50);
+    fixDef.shape.SetAsBox(halfPixels(100), halfPixels(100));
+    var pedestal = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    pedestal.SetUserData("pedestal");
+
     // add 26 randomly sized rectangles to the world
-    var NUMBOXES = 3;
+    var NUMBOXES = 5;
     var boxArray = [];
     // array of images
     var imageArray = [];
@@ -289,25 +300,25 @@ window.onload = function () {
         return {rotation: rot, width: w, height: h, x: topLeftX, y: topLeftY};
     }
 
-    // this will create the shelves at the beginning of the game after
-    // the blocks have settled
-    function createShelves () {
-        bodyDef.type = b2Body.b2_staticBody;
+    // // this will create the shelves at the beginning of the game after
+    // // the blocks have settled
+    // function createShelves () {
+    //     bodyDef.type = b2Body.b2_staticBody;
 
-        // left side
-        bodyDef.position.x = pixels(canvas.width / 4.0);
-        bodyDef.position.y = pixels(canvas.height / 1.5);
-        fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-        leftShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        leftShelf.SetUserData("leftShelf");
+    //     // left side
+    //     bodyDef.position.x = pixels(canvas.width / 4.0);
+    //     bodyDef.position.y = pixels(canvas.height / 1.5);
+    //     fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
+    //     leftShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    //     leftShelf.SetUserData("leftShelf");
 
-        // right side
-        bodyDef.position.x = pixels(canvas.width * 3.0 / 4.0);
-        bodyDef.position.y = pixels(canvas.height / 1.5);
-        fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-        rightShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        rightShelf.SetUserData("rightShelf");
-    }
+    //     // right side
+    //     bodyDef.position.x = pixels(canvas.width * 3.0 / 4.0);
+    //     bodyDef.position.y = pixels(canvas.height / 1.5);
+    //     fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
+    //     rightShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    //     rightShelf.SetUserData("rightShelf");
+    // }
 
     // function called any time all boxes at rest
     // checks stacking order of the boxes
@@ -318,7 +329,7 @@ window.onload = function () {
             // check box 0
             if (i==0) {
                 var contactList0 = boxArray[i].m_body.m_contactList;
-                console.log("contactList0: ", contactList0);
+                // console.log("contactList0: ", contactList0);
 
                 // first, check to see if the box is rotated correctly
                 if (testAngle(boxArray[i])) {
@@ -329,7 +340,7 @@ window.onload = function () {
                         if (contactList0.next.next == null) {
                             // now check to make sure one of the contacts is the left shelf,
                             // and the other is box1
-                            if ((contactList0.contact.m_fixtureA.m_userData == 'leftShelf' ||contactList0.contact.m_fixtureB.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureA.m_userData == 'leftShelf' || contactList0.next.contact.m_fixtureB.m_userData == 'leftShelf') && (contactList0.contact.m_fixtureA.m_userData == 'box1' ||contactList0.contact.m_fixtureB.m_userData == 'box1' || contactList0.next.contact.m_fixtureA.m_userData == 'box1' || contactList0.next.contact.m_fixtureB.m_userData == 'box1') ) {
+                            if ((contactList0.contact.m_fixtureA.m_userData == 'pedestal' ||contactList0.contact.m_fixtureB.m_userData == 'pedestal' || contactList0.next.contact.m_fixtureA.m_userData == 'pedestal' || contactList0.next.contact.m_fixtureB.m_userData == 'pedestal') && (contactList0.contact.m_fixtureA.m_userData == 'box1' ||contactList0.contact.m_fixtureB.m_userData == 'box1' || contactList0.next.contact.m_fixtureA.m_userData == 'box1' || contactList0.next.contact.m_fixtureB.m_userData == 'box1') ) {
                                 console.log('so far so good with box 0!');
                                 correctBoxes++;
                             }
@@ -341,7 +352,7 @@ window.onload = function () {
             // check boxes 1 through 3
             if (i > 0 && i < boxArray.length-1) {
                 var contactList = boxArray[i].m_body.m_contactList;
-                console.log("contactList[", i, "]: ", contactList);
+                // console.log("contactList[", i, "]: ", contactList);
 
                 // first, check to see if the box is rotated correctly
                 if (testAngle(boxArray[i])) {
@@ -431,7 +442,7 @@ window.onload = function () {
             }
 
             if (restingCount == boxArray.length) {
-                createShelves();
+                // createShelves();
                 gameStarted = true;
             }
         }
@@ -483,22 +494,31 @@ window.onload = function () {
         // stepping through the simulation
 	    // parameters are time step, velocity iteration count, and position iteration count 
 	    world.Step(1/60, 10, 10);
-	    // world.DrawDebugData();
+	    world.DrawDebugData();
 	    world.ClearForces();
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        // context.clearRect(0, 0, canvas.width, canvas.height);
 
-        // draw shelves
-        if (gameStarted) {
-            context.beginPath();
-            context.rect(getBoxCoordinates(leftShelf).x, getBoxCoordinates(leftShelf).y, getBoxCoordinates(leftShelf).width, getBoxCoordinates(leftShelf).height);
-            context.rect(getBoxCoordinates(rightShelf).x, getBoxCoordinates(rightShelf).y, getBoxCoordinates(rightShelf).width, getBoxCoordinates(rightShelf).height);
-            context.fillStyle = 'yellow';
-            context.fill();
-            context.lineWidth = 1;
-            context.strokeStyle = 'black';
-            context.stroke();
-        }
+        // // draw shelves
+        // if (gameStarted) {
+        //     context.beginPath();
+        //     context.rect(getBoxCoordinates(leftShelf).x, getBoxCoordinates(leftShelf).y, getBoxCoordinates(leftShelf).width, getBoxCoordinates(leftShelf).height);
+        //     context.rect(getBoxCoordinates(rightShelf).x, getBoxCoordinates(rightShelf).y, getBoxCoordinates(rightShelf).width, getBoxCoordinates(rightShelf).height);
+        //     context.fillStyle = 'yellow';
+        //     context.fill();
+        //     context.lineWidth = 1;
+        //     context.strokeStyle = 'black';
+        //     context.stroke();
+        // }
+
+        // draw the pedestal
+        context.beginPath();
+        context.rect(getBoxCoordinates(pedestal).x, getBoxCoordinates(pedestal).y, getBoxCoordinates(pedestal).width, getBoxCoordinates(pedestal).height);
+        context.fillStyle = 'yellow';
+        context.fill();
+        context.lineWidth = 1;
+        context.strokeStyle = 'black';
+        context.stroke();
 
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
