@@ -43,7 +43,7 @@ window.onload = function () {
     var enemyCanvas;
     var enemyContext;
 
-    // global variables to be used throughout game
+    // global variables
     var boxArray = [];
     var imageArray = [];
     var pedestal;
@@ -93,54 +93,17 @@ window.onload = function () {
 
     // body definition includes position in the world and whether dynamic or static
     var bodyDef = new b2BodyDef;
-    bodyDef.type = b2Body.b2_staticBody;
+    bodyDef.type = b2Body.b2_staticBody; // define this as static b/c first objects we'll define are ground, ceiling, etc.
 
 
     /*****************************
-    Add listeners
+    Add non-canvas-specific listeners
     *****************************/
-
-    document.addEventListener("mousedown", function(e) {
-        mouseIsDown = true;
-        if (gameStarted) {
-            handleMouseMove(e);
-            document.addEventListener("mousemove", handleMouseMove, true);
-        }
-        for (var i = 0; i < boxArray.length; i++) {
-            console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
-            // console.log("Transform: ", boxArray[i].m_body.GetTransform());
-            // console.log("Object [", i," ]: ", boxArray[i]);
-            // console.log(getBoxCoordinates(boxArray[i]));
-        }
-        // console.log("Box 0 contact list: ", boxArray[0].m_body.GetContactList());
-        // console.log("getBodyList: ", world.GetBodyList());
-        
-
-    }, true);
-
-    document.addEventListener("mouseup", function() {
-        if (gameStarted) {
-            document.removeEventListener("mousemove", handleMouseMove, true);
-        }
-        mouseIsDown = false;
-        mouseX = undefined;
-        mouseY = undefined;
-        
-        // reset ability to check stacking order next time objects come to rest
-        checkRun = false;
-    }, true);
-
-    // refigure canvas1 position if window is resized
-    window.addEventListener("resize", function() {
-        canvasPosition = getElementPosition(document.getElementById("canvas1"));
-        console.log("resizing! recalibrating!");
-    }, true);
 
     $('button#playerbutton').click(function(event) {
         event.preventDefault(event);
         $('#playerform').addClass('hide');
         playerName = $('#playername').val();
-        // playerName = playerName.toString();
         console.log(playerName + ' pushed the button!');
         socket.emit('player name', {name: playerName});
     })
@@ -186,6 +149,44 @@ window.onload = function () {
             enemyCanvas = canvas1;
             enemyContext = context1;
         }
+
+        // Add listeners (these require specific canvases, which is why adding them here)
+
+        document.addEventListener("mousedown", function(e) {
+            mouseIsDown = true;
+            handleMouseMove(e);
+            document.addEventListener("mousemove", handleMouseMove, true);
+            for (var i = 0; i < boxArray.length; i++) {
+                console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
+                // console.log("Transform: ", boxArray[i].m_body.GetTransform());
+                // console.log("Object [", i," ]: ", boxArray[i]);
+                // console.log(getBoxCoordinates(boxArray[i]));
+            }
+            // console.log("Box 0 contact list: ", boxArray[0].m_body.GetContactList());
+            // console.log("getBodyList: ", world.GetBodyList());
+            
+
+        }, true);
+
+        document.addEventListener("mouseup", function() {
+            document.removeEventListener("mousemove", handleMouseMove, true);
+            mouseIsDown = false;
+            mouseX = undefined;
+            mouseY = undefined;
+            
+            // reset ability to check stacking order next time objects come to rest
+            checkRun = false;
+        }, true);
+
+        // refigure canvas position if window is resized
+        window.addEventListener("resize", function() {
+            if (playerNumber == 1) {
+                canvasPosition = getElementPosition(document.getElementById("canvas1"));
+            } else if (playerNumber == 2) {
+                canvasPosition = getElementPosition(document.getElementById("canvas2"));
+            }  
+            console.log("resizing! recalibrating!");
+        }, true);
 
         // set everything up with specific canvas
         setUpWorld();
