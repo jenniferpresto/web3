@@ -20,6 +20,13 @@ io.set('log level', 2);
 io.sockets.on('connection', function(clientmessage) {
 	util.log('the user ' + clientmessage.id + ' has just connected');
 
+	// if Player 1 has already signed up by the time
+	// Player 2 connects, give Player 1's name to Player 2
+	if (numPlayers == 1) {
+		clientmessage.emit('player one assigned', users[0].name);
+	}
+
+	// when one of the clients hits the button
 	clientmessage.on('player name', function(data) {
 		numPlayers++;
 		// save user information as an object; don't know if will be useful
@@ -28,12 +35,18 @@ io.sockets.on('connection', function(clientmessage) {
 		util.log(data.name + ' just pushed the button');
 
 		// sent that player's number back to him/her immediately
-		clientmessage.emit('player number', numPlayers);
+		clientmessage.emit('assign number', numPlayers);
+
+		// if player 2 is already connected, but hasn't yet pressed the button,
+		// send player 1's name back to him/her
+		if (numPlayers == 1) {
+			clientmessage.broadcast.emit('player one assigned', data.name);
+		}
 
 		// if the first player, send that player number back to the player who pushed the button
 		if (users.length == 1) {
 			player1Name = data.name;
-		} else if (users.length ==2) {
+		} else if (users.length == 2) {
 			player2Name = data.name;
 			// if this is the second player, send both names to both players
 			io.sockets.emit('both names', {
@@ -43,4 +56,3 @@ io.sockets.on('connection', function(clientmessage) {
 		}
 	})
 })
-

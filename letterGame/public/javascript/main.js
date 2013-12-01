@@ -12,19 +12,19 @@ http://code.google.com/p/box2dweb/
 *****************************/
 
 window.onload = function () {
-    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-    // via http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
 
     var socket = io.connect(window.location.hostname);
     var playerName; // this will be the name used by this player
     var enemyName; // this will be the name of the other player
-    var playerNumber; // this will be 1 or 2
+    var playerNumber = 0; // this will be 1 or 2
 
     // booleans to determine whether game has started (may be unnecessary)
     var gameStarted = false;
     var checkRun = false;
     var gameWon = false;
 
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    // via http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
     window.requestAnimFrame = (function(){
           return  window.requestAnimationFrame       || 
                   window.webkitRequestAnimationFrame || 
@@ -108,13 +108,17 @@ window.onload = function () {
         socket.emit('player name', {name: playerName});
     })
 
-    socket.on('player number', function(number) {
+    socket.on('assign number', function(number) {
         console.log ('got a number and it is ' + number + '! woo!');
         playerNumber = number;
         // if this person is player 1, go ahead and fill in the name
         if (number == 1) {
             $('#player1').html(playerName);
         }
+    })
+
+    socket.on('player one assigned', function(enemyName) {
+        $('#player1').html(enemyName);
     })
 
     // when both names are set, update both labels for both players
