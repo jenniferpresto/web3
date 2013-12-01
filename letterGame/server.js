@@ -15,16 +15,18 @@ var users = [];
 var names = [];
 
 // io.set('log level', 2);
-io.sockets.on('connection', function(socket) {
-	users.push(socket.id);
-	util.log('the user ' + socket.id + ' has just connected');
+io.sockets.on('connection', function(clientmessage) {
+	users.push(clientmessage.id);
+	util.log('the user ' + clientmessage.id + ' has just connected');
 	util.log('there are ' + users.length + ' users online right now');
+
+	clientmessage.on('player name', function(data) {
+		util.log('for the love of God, just print something!');
+		util.log(data.name + 'just pushed the button');
+		// if (names.length < 2) {
+		// 	names.push(data);
+		// }
+	})
+
 })
 
-io.sockets.on('player name', function(data) {
-	util.log('for the love of God, just print something!');
-	util.log(data.name + 'just pushed the button');
-	// if (names.length < 2) {
-	// 	names.push(data);
-	// }
-})
