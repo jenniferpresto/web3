@@ -60,7 +60,7 @@ window.onload = function () {
     var context = canvas.getContext('2d');
 
     var canvas2 = document.getElementById("canvas2");
-    var context = canvas2.getContext('2d');
+    var context2 = canvas2.getContext('2d');
 
 
     // set up generic fixDef and bodyDef variables
