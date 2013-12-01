@@ -16,6 +16,14 @@ window.onload = function () {
     // via http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
 
     var socket = io.connect(window.location.hostname);
+    var playerName; // this will be the name used by this player
+    var enemyName; // this will be the name of the other player
+    var playerNumber; // this will be 1 or 2
+
+    // booleans to determine whether game has started (may be unnecessary)
+    var gameStarted = false;
+    var checkRun = false;
+    var gameWon = false;
 
     window.requestAnimFrame = (function(){
           return  window.requestAnimationFrame       || 
@@ -28,13 +36,24 @@ window.onload = function () {
                   };
     })();
 
-    // boolean to determine if boxes have rested so shelves can be created
-    var gameStarted = false;
-    var checkRun = false;
-    var gameWon = false;
+    // generic canvas references and variables
+    var myCanvas;
+    var myContext;
+    var canvasPosition;
+    var enemyCanvas;
+    var enemyContext;
 
+    // global variables to be used throughout game
+    var boxArray = [];
+    var imageArray = [];
+    var pedestal;
+    // mouse variables
+    var mouseX, mouseY, mouseVec, mouseIsDown, selectedBody, mouseJoint;
 
-    // Box2D variables
+    /*****************************
+    Variables for generic Box2d world
+    *****************************/
+
 	var     b2Vec2 = Box2D.Common.Math.b2Vec2
         ,   b2AABB = Box2D.Collision.b2AABB
         ,   b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -54,7 +73,7 @@ window.onload = function () {
     var world = new b2World (
     	new b2Vec2(0, 9.8), true); // gravity and allowing sleep
 
-    var leftShelf, rightShelf;
+    // var leftShelf, rightShelf;
 
     var SCALE = 30.0;
 
@@ -76,93 +95,6 @@ window.onload = function () {
     var bodyDef = new b2BodyDef;
     bodyDef.type = b2Body.b2_staticBody;
 
-    // define the floor
-    // position is in the center of the object
-    bodyDef.position.x = halfPixels(canvas1.width);
-    bodyDef.position.y = pixels(canvas1.height);
-
-    // define the actual shape
-    // uses half-height and half-width as dimensions
-    fixDef.shape = new b2PolygonShape;
-    fixDef.shape.SetAsBox(halfPixels(canvas1.width), halfPixels(10));
-    // then add the floor to the world
-    var floor = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    floor.SetUserData("floor");
-
-    // do the same for the other walls
-    // ceiling
-    bodyDef.position.x = halfPixels(canvas1.width);
-    bodyDef.position.y = 0.0;
-    fixDef.shape.SetAsBox(halfPixels(canvas1.width), halfPixels(0));
-    var ceiling = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    ceiling.SetUserData("ceiling");
-
-    // left wall
-    bodyDef.position.x = 0;
-    bodyDef.position.y = halfPixels(canvas1.height);
-    fixDef.shape.SetAsBox(halfPixels(10), halfPixels(canvas1.height));
-    var leftWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    leftWall.SetUserData("leftWall");
-
-    // right wall
-    bodyDef.position.x = pixels(canvas1.width);
-    bodyDef.position.y = halfPixels(canvas1.height);
-    fixDef.shape.SetAsBox(halfPixels(10), halfPixels(canvas1.height));
-    var rightWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    rightWall.SetUserData("rightWall");
-
-    // pedestal
-    bodyDef.position.x = halfPixels(canvas1.width);
-    bodyDef.position.y = pixels(canvas1.height - 50);
-    fixDef.shape.SetAsBox(halfPixels(100), halfPixels(100));
-    var pedestal = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    pedestal.SetUserData("pedestal");
-
-    // add 26 randomly sized rectangles to the world
-    var NUMBOXES = 3;
-    var boxArray = [];
-    // array of images
-    var imageArray = [];
-
-    bodyDef.type = b2Body.b2_dynamicBody;
-    for (var i = 0; i < NUMBOXES; i++) {
-        // create rectangles
-		fixDef.shape = new b2PolygonShape;
-		var randWidth = Math.random() * 50 + 50; 	// number btwn 50 and 100 
-		var randHeight = Math.random() * 50 + 50; 	// number btwn 50 and 100
-		fixDef.shape.SetAsBox (halfPixels(randWidth), halfPixels(randHeight)); // half-width, half-height
-
-        // determine their positions
-    	var randPosX = (Math.random() * (canvas1.width - 50)) + 25; // give 25-pixel buffer on each side
-    	var randPosY = Math.random() * canvas1.height * 0.5; // top half of screen only
-    	bodyDef.position.x = pixels(randPosX);
-    	bodyDef.position.y = pixels(randPosY);
-
-        var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        newBody.SetUserData("box" + i.toString()); // giving it a custom ID, essentially
-        // console.log("[", i, "]: ", newBody);
-        boxArray.push(newBody);
-
-        // load the images
-        imageArray[i] = new Image();
-        imageArray[i].src = '../imgs/test' + i.toString() + '.png';
-    }
-
-    // draw the world
-    var debugDraw = new b2DebugDraw();
-    debugDraw.SetSprite(canvas1.getContext("2d"));
-    debugDraw.SetDrawScale(SCALE);
-    debugDraw.SetFillAlpha(0.3);
-    debugDraw.SetLineThickness(1.0);
-    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-    world.SetDebugDraw(debugDraw);
-
-    // add mouse variables
-    var mouseX, mouseY, mouseVec, mouseIsDown, selectedBody, mouseJoint;
-
-    // transpose for the canvas1 position
-    var canvasPosition = getElementPosition(document.getElementById("canvas1"));
-    // console.log("canvas1 top-left corner: ", canvasPosition);
 
     /*****************************
     Add listeners
@@ -170,8 +102,10 @@ window.onload = function () {
 
     document.addEventListener("mousedown", function(e) {
         mouseIsDown = true;
-        handleMouseMove(e);
-        document.addEventListener("mousemove", handleMouseMove, true);
+        if (gameStarted) {
+            handleMouseMove(e);
+            document.addEventListener("mousemove", handleMouseMove, true);
+        }
         for (var i = 0; i < boxArray.length; i++) {
             console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
             // console.log("Transform: ", boxArray[i].m_body.GetTransform());
@@ -185,10 +119,13 @@ window.onload = function () {
     }, true);
 
     document.addEventListener("mouseup", function() {
-        document.removeEventListener("mousemove", handleMouseMove, true);
+        if (gameStarted) {
+            document.removeEventListener("mousemove", handleMouseMove, true);
+        }
         mouseIsDown = false;
         mouseX = undefined;
         mouseY = undefined;
+        
         // reset ability to check stacking order next time objects come to rest
         checkRun = false;
     }, true);
@@ -202,32 +139,149 @@ window.onload = function () {
     $('button#playerbutton').click(function(event) {
         event.preventDefault(event);
         $('#playerform').addClass('hide');
-        var playername = $('#playername').val();
-        console.log(playername + ' pushed the button!');
-        socket.emit('player name', {name: playername});
+        playerName = $('#playername').val();
+        // playerName = playerName.toString();
+        console.log(playerName + ' pushed the button!');
+        socket.emit('player name', {name: playerName});
     })
 
-    // // add collision listener for the world
-    // var contactListener = new b2ContactListener;
-    // contactListener.BeginContact = function(contact) {
-    //     console.log(contact.GetFixtureA().GetBody().GetUserData());
-    //     console.log(contact.GetFixtureB().GetBody().GetUserData()); 
-    // }
-    // contactListener.EndContact = function(contact) {
-    //     console.log(contact.GetFixtureA().GetBody().GetUserData());
-    // }
-    // contactListener.PostSolve = function(contact, impulse) {
-        
-    // }
-    // contactListener.PreSolve = function(contact, oldManifold) {
+    socket.on('player number', function(number) {
+        console.log ('got a number and it is ' + number + '! woo!');
+        playerNumber = number;
+        // if this person is player 1, go ahead and fill in the name
+        if (number == 1) {
+            $('#player1').html(playerName);
+        }
+    })
 
-    // }
-    // world.SetContactListener(contactListener);
+    // when both names are set, update both labels for both players
+    // then start the game
+    socket.on('both names', function (playerNames) {
+        $('#player1').html(playerNames.name1);
+        $('#player2').html(playerNames.name2);
 
+        if (playerNumber == 1) {
+            enemyName = playerNames.name2;
+        } else if (playerNumber == 2) {
+            enemyName = playerNames.name1;
+        }
+
+        // gameStarted = true;
+        assignCanvasAndStart();
+    })
 
     /*****************************
     Defined functions
     *****************************/
+
+    function assignCanvasAndStart() {
+        if (playerNumber == 1) {
+            myCanvas = canvas1;
+            myContext = context1;
+            enemyCanvas = canvas2;
+            enemyContext = context2;
+        } else if (playerNumber == 2) {
+            myCanvas = canvas2;
+            myContext = context2;
+            enemyCanvas = canvas1;
+            enemyContext = context1;
+        }
+
+        // set everything up with specific canvas
+        setUpWorld();
+    }
+
+    function setUpWorld() {
+        // define the floor
+        // position is in the center of the object
+        bodyDef.position.x = halfPixels(myCanvas.width);
+        bodyDef.position.y = pixels(myCanvas.height);
+
+        // define the actual shape
+        // uses half-height and half-width as dimensions
+        fixDef.shape = new b2PolygonShape;
+        fixDef.shape.SetAsBox(halfPixels(myCanvas.width), halfPixels(10));
+        // then add the floor to the world
+        var floor = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        floor.SetUserData("floor");
+
+        // do the same for the other walls
+        // ceiling
+        bodyDef.position.x = halfPixels(canvas1.width);
+        bodyDef.position.y = 0.0;
+        fixDef.shape.SetAsBox(halfPixels(myCanvas.width), halfPixels(0));
+        var ceiling = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        ceiling.SetUserData("ceiling");
+
+        // left wall
+        bodyDef.position.x = 0;
+        bodyDef.position.y = halfPixels(myCanvas.height);
+        fixDef.shape.SetAsBox(halfPixels(10), halfPixels(myCanvas.height));
+        var leftWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        leftWall.SetUserData("leftWall");
+
+        // right wall
+        bodyDef.position.x = pixels(myCanvas.width);
+        bodyDef.position.y = halfPixels(myCanvas.height);
+        fixDef.shape.SetAsBox(halfPixels(10), halfPixels(myCanvas.height));
+        var rightWall = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        rightWall.SetUserData("rightWall");
+
+        // pedestal
+        bodyDef.position.x = halfPixels(myCanvas.width);
+        bodyDef.position.y = pixels(myCanvas.height - 50);
+        fixDef.shape.SetAsBox(halfPixels(100), halfPixels(100));
+        pedestal = world.CreateBody(bodyDef).CreateFixture(fixDef);
+        pedestal.SetUserData("pedestal");
+
+        // add randomly sized rectangles to the world
+        var NUMBOXES = 3;
+
+        bodyDef.type = b2Body.b2_dynamicBody;
+        for (var i = 0; i < NUMBOXES; i++) {
+            // create rectangles
+            fixDef.shape = new b2PolygonShape;
+            var randWidth = Math.random() * 50 + 50;    // number btwn 50 and 100 
+            var randHeight = Math.random() * 50 + 50;   // number btwn 50 and 100
+            fixDef.shape.SetAsBox (halfPixels(randWidth), halfPixels(randHeight)); // half-width, half-height
+
+            // determine their positions
+            var randPosX = (Math.random() * (myCanvas.width - 50)) + 25; // give 25-pixel buffer on each side
+            var randPosY = Math.random() * myCanvas.height * 0.5; // top half of screen only
+            bodyDef.position.x = pixels(randPosX);
+            bodyDef.position.y = pixels(randPosY);
+
+            var newBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
+            newBody.SetUserData("box" + i.toString()); // giving it a custom ID, essentially
+            // console.log("[", i, "]: ", newBody);
+            boxArray.push(newBody);
+
+            // load the images
+            imageArray[i] = new Image();
+            imageArray[i].src = '../imgs/test' + i.toString() + '.png';
+        }
+
+        // draw the world
+        var debugDraw = new b2DebugDraw();
+        debugDraw.SetSprite(myCanvas.getContext("2d"));
+        debugDraw.SetDrawScale(SCALE);
+        debugDraw.SetFillAlpha(0.3);
+        debugDraw.SetLineThickness(1.0);
+        debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+        world.SetDebugDraw(debugDraw);
+
+
+        // transpose for the canvas1 position
+        if (playerNumber == 1) {
+            canvasPosition = getElementPosition(document.getElementById("canvas1"));
+            // console.log("canvas1 top-left corner: ", canvasPosition);
+        } else if (playerNumber == 2) {
+            canvasPosition = getElementPosition(document.getElementById("canvas2"));
+        }
+
+        // then kick everything off
+        requestAnimFrame(update);
+    }
 
     // short functions just to make conversion to b2d units a little less bulky
     function pixels(pixels) {
@@ -310,27 +364,7 @@ window.onload = function () {
         return {rotation: rot, width: w, height: h, x: topLeftX, y: topLeftY};
     }
 
-    // // this will create the shelves at the beginning of the game after
-    // // the blocks have settled
-    // function createShelves () {
-    //     bodyDef.type = b2Body.b2_staticBody;
-
-    //     // left side
-    //     bodyDef.position.x = pixels(canvas1.width / 4.0);
-    //     bodyDef.position.y = pixels(canvas1.height / 1.5);
-    //     fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-    //     leftShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    //     leftShelf.SetUserData("leftShelf");
-
-    //     // right side
-    //     bodyDef.position.x = pixels(canvas1.width * 3.0 / 4.0);
-    //     bodyDef.position.y = pixels(canvas1.height / 1.5);
-    //     fixDef.shape.SetAsBox(halfPixels(150), halfPixels(10));
-    //     rightShelf = world.CreateBody(bodyDef).CreateFixture(fixDef);
-    //     rightShelf.SetUserData("rightShelf");
-    // }
-
-    // function called any time all boxes at rest
+    // checkStackingOrder function called any time all boxes at rest
     // checks stacking order of the boxes
     function checkStackingOrder () {
         console.log("checkingStackOrder");
@@ -359,7 +393,7 @@ window.onload = function () {
                 }
             }
 
-            // check boxes 1 through 3
+            // check middle boxes
             if (i > 0 && i < boxArray.length-1) {
                 var contactList = boxArray[i].m_body.m_contactList;
                 // console.log("contactList[", i, "]: ", contactList);
@@ -383,7 +417,7 @@ window.onload = function () {
                 }
             }
 
-            // check box 5
+            // check last box
             if (i == boxArray.length-1) {
                 var contactList = boxArray[i].m_body.m_contactList;
                 var boxBelow = 'box' + (i-1).toString();
@@ -509,48 +543,36 @@ window.onload = function () {
 
         // context1.clearRect(0, 0, canvas1.width, canvas1.height);
 
-        // // draw shelves
-        // if (gameStarted) {
-        //     context1.beginPath();
-        //     context1.rect(getBoxCoordinates(leftShelf).x, getBoxCoordinates(leftShelf).y, getBoxCoordinates(leftShelf).width, getBoxCoordinates(leftShelf).height);
-        //     context1.rect(getBoxCoordinates(rightShelf).x, getBoxCoordinates(rightShelf).y, getBoxCoordinates(rightShelf).width, getBoxCoordinates(rightShelf).height);
-        //     context1.fillStyle = 'yellow';
-        //     context1.fill();
-        //     context1.lineWidth = 1;
-        //     context1.strokeStyle = 'black';
-        //     context1.stroke();
-        // }
-
         // draw the pedestal
-        context1.beginPath();
-        context1.rect(getBoxCoordinates(pedestal).x, getBoxCoordinates(pedestal).y, getBoxCoordinates(pedestal).width, getBoxCoordinates(pedestal).height);
-        context1.fillStyle = 'yellow';
-        context1.fill();
-        context1.lineWidth = 1;
-        context1.strokeStyle = 'black';
-        context1.stroke();
+        myContext.beginPath();
+        myContext.rect(getBoxCoordinates(pedestal).x, getBoxCoordinates(pedestal).y, getBoxCoordinates(pedestal).width, getBoxCoordinates(pedestal).height);
+        myContext.fillStyle = 'yellow';
+        myContext.fill();
+        myContext.lineWidth = 1;
+        myContext.strokeStyle = 'black';
+        myContext.stroke();
 
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
             // draw images
-            context1.save();
+            myContext.save();
             var boxWidth = getBoxCoordinates(boxArray[i]).width;
             var boxHeight = getBoxCoordinates(boxArray[i]).height;
             var boxX = getBoxCoordinates(boxArray[i]).x + 0.5 * boxWidth;
             var boxY = getBoxCoordinates(boxArray[i]).y + 0.5 * boxHeight;
-            context1.translate(boxX, boxY);
-            context1.rotate(getBoxCoordinates(boxArray[i]).rotation);
-            context1.drawImage(imageArray[i], -0.5 * boxWidth, -0.5 * boxHeight, boxWidth, boxHeight);
-            context1.restore();
+            myContext.translate(boxX, boxY);
+            myContext.rotate(getBoxCoordinates(boxArray[i]).rotation);
+            myContext.drawImage(imageArray[i], -0.5 * boxWidth, -0.5 * boxHeight, boxWidth, boxHeight);
+            myContext.restore();
         }
 
         if (gameWon) {
-            context1.fillStyle = 'rgba(100, 100, 100, 0.5)';
-            context1.rect(0, 0, canvas1.width, canvas1.height);
-            context1.fill();
-            context1.fillStyle = 'black';
-            context1.lineWidth = 1;
-            context1.strokeText("You win!", canvas1.width/2, canvas1.height/2);            
+            myContext.fillStyle = 'rgba(100, 100, 100, 0.5)';
+            myContext.rect(0, 0, myCanvas.width, myCanvas.height);
+            myContext.fill();
+            myContext.fillStyle = 'black';
+            myContext.lineWidth = 1;
+            myContext.strokeText("You win!", myCanvas.width/2, myCanvas.height/2);            
         }
         if (!gameWon) {
             requestAnimFrame(update);
@@ -558,5 +580,5 @@ window.onload = function () {
     }
 
     // fire it all up with the first call
-    requestAnimFrame(update);
+    // requestAnimFrame(update);
 }

@@ -11,22 +11,36 @@ util.log('server running at port: ' + port);
 
 var io = require('socket.io').listen(app);
 
-var users = [];
-var names = [];
+var numPlayers = 0;
+var player1Name;
+var player2Name;
+var users = []; // useful?
 
-// io.set('log level', 2);
+io.set('log level', 2);
 io.sockets.on('connection', function(clientmessage) {
-	users.push(clientmessage.id);
 	util.log('the user ' + clientmessage.id + ' has just connected');
-	util.log('there are ' + users.length + ' users online right now');
 
 	clientmessage.on('player name', function(data) {
-		util.log('for the love of God, just print something!');
-		util.log(data.name + 'just pushed the button');
-		// if (names.length < 2) {
-		// 	names.push(data);
-		// }
-	})
+		numPlayers++;
+		// save user information as an object; don't know if will be useful
+		users.push({number: numPlayers, id: clientmessage.id, name: data.name});
+		util.log('there are ' + numPlayers + ' users ready');
+		util.log(data.name + ' just pushed the button');
 
+		// sent that player's number back to him/her immediately
+		clientmessage.emit('player number', numPlayers);
+
+		// if the first player, send that player number back to the player who pushed the button
+		if (users.length == 1) {
+			player1Name = data.name;
+		} else if (users.length ==2) {
+			player2Name = data.name;
+			// if this is the second player, send both names to both players
+			io.sockets.emit('both names', {
+				name1: player1Name, 
+				name2: player2Name
+			})
+		}
+	})
 })
 
