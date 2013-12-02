@@ -200,7 +200,7 @@ window.onload = function () {
             // console.log('data length is ' + data.length);
 
             for (var i = 0; i < data.length; i++ ) {
-                // console.log('am I doing all three? # ' + i);
+                console.log('am I doing all three? # ' + i + ', here is the x value: ' + data[i].x);
                 // draw images
                 enemyContext.save();
                 var enemyBoxWidth = data[i].w;
@@ -581,8 +581,6 @@ window.onload = function () {
 
         // this will be an array of objects to go to the server
         var dataArray = [];
-        // create the object that will go in the array to send to the server
-        boxData = new Object();
 
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
@@ -597,6 +595,8 @@ window.onload = function () {
             myContext.drawImage(imageArray[i], -0.5 * boxWidth, -0.5 * boxHeight, boxWidth, boxHeight);
             myContext.restore();
 
+            // create the object that will go in the array to send to the server
+            boxData = new Object();
             // package this information to send to the server
             boxData.w = boxWidth;
             boxData.h = boxHeight;
