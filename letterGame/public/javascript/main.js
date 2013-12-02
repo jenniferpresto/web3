@@ -137,6 +137,7 @@ window.onload = function () {
         assignCanvasAndStart();
     })
 
+
     /*****************************
     Defined functions
     *****************************/
@@ -191,6 +192,26 @@ window.onload = function () {
             }  
             console.log("resizing! recalibrating!");
         }, true);
+
+        // this will be what draws the enemy's canvas
+        socket.on('enemy data', function (data) {
+            // clear the background
+            enemyContext.clearRect(0, 0, enemyCanvas.width, enemyCanvas.height);
+            // console.log('data length is ' + data.length);
+
+            for (var i = 0; i < data.length; i++ ) {
+               // draw images
+                enemyContext.save();
+                var enemyBoxWidth = data[i].w;
+                var enemyBoxHeight = data[i].h;
+                var enemyBoxX = data[i].x;
+                var enemyBoxY = data[i].y;
+                enemyContext.translate(enemyBoxX, enemyBoxY);
+                enemyContext.rotate(data[i].r);
+                enemyContext.drawImage(imageArray[i], -0.5 * enemyBoxWidth, -0.5 * enemyBoxHeight, enemyBoxWidth, enemyBoxHeight);
+                enemyContext.restore();
+            }
+        })
 
         // set everything up with specific canvas
         setUpWorld();
@@ -479,7 +500,6 @@ window.onload = function () {
     *****************************/
 
     function update() {
-        // determine when to create shelves
         // (when all boxes resting for the first time)
         if (!gameStarted) {
             var restingCount = 0;
@@ -557,6 +577,11 @@ window.onload = function () {
         myContext.strokeStyle = 'black';
         myContext.stroke();
 
+        // this will be an array of objects to go to the server
+        var dataArray = [];
+        // create the object that will go in the array to send to the server
+        boxData = new Object();
+
         // draw test boxes, rotated appropropriately
         for (var i = 0; i < boxArray.length; i++) {
             // draw images
@@ -569,7 +594,19 @@ window.onload = function () {
             myContext.rotate(getBoxCoordinates(boxArray[i]).rotation);
             myContext.drawImage(imageArray[i], -0.5 * boxWidth, -0.5 * boxHeight, boxWidth, boxHeight);
             myContext.restore();
+
+            // package this information to send to the server
+            boxData.w = boxWidth;
+            boxData.h = boxHeight;
+            boxData.x = boxX;
+            boxData.y = boxY;
+            boxData.r = getBoxCoordinates(boxArray[i]).rotation;
+
+            dataArray.push(boxData);
         }
+
+        // then send it
+        socket.emit('game data', dataArray);
 
         if (gameWon) {
             myContext.fillStyle = 'rgba(100, 100, 100, 0.5)';
@@ -583,7 +620,4 @@ window.onload = function () {
             requestAnimFrame(update);
         }
     }
-
-    // fire it all up with the first call
-    // requestAnimFrame(update);
 }
