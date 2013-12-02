@@ -200,7 +200,8 @@ window.onload = function () {
             // console.log('data length is ' + data.length);
 
             for (var i = 0; i < data.length; i++ ) {
-               // draw images
+                // console.log('am I doing all three? # ' + i);
+                // draw images
                 enemyContext.save();
                 var enemyBoxWidth = data[i].w;
                 var enemyBoxHeight = data[i].h;
@@ -208,6 +209,7 @@ window.onload = function () {
                 var enemyBoxY = data[i].y;
                 enemyContext.translate(enemyBoxX, enemyBoxY);
                 enemyContext.rotate(data[i].r);
+                // enemyContext.drawImage(imageArray[i], -0.5 * data[i].w, -0.5 * data[i].h, data[i].w, data[i].h);
                 enemyContext.drawImage(imageArray[i], -0.5 * enemyBoxWidth, -0.5 * enemyBoxHeight, enemyBoxWidth, enemyBoxHeight);
                 enemyContext.restore();
             }
@@ -350,7 +352,7 @@ window.onload = function () {
     }
 
     // function to calculate position of elements;
-    // used for canvas1 element to get correct mouse positions
+    // used for myCanvas element to get correct mouse positions for selecting bodies
     function getElementPosition(element) {
         var elem = element;
         var tagname = "";
@@ -563,10 +565,10 @@ window.onload = function () {
         // stepping through the simulation
 	    // parameters are time step, velocity iteration count, and position iteration count 
 	    world.Step(1/60, 10, 10);
-	    world.DrawDebugData();
+	    // world.DrawDebugData();
 	    world.ClearForces();
 
-        // context1.clearRect(0, 0, canvas1.width, canvas1.height);
+        myContext.clearRect(0, 0, canvas1.width, canvas1.height);
 
         // draw the pedestal
         myContext.beginPath();
