@@ -161,12 +161,12 @@ window.onload = function () {
             mouseIsDown = true;
             handleMouseMove(e);
             document.addEventListener("mousemove", handleMouseMove, true);
-            for (var i = 0; i < boxArray.length; i++) {
-                console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
+            // for (var i = 0; i < boxArray.length; i++) {
+            //     console.log("Box #", i, " angle: ", boxArray[i].m_body.GetAngle());
                 // console.log("Transform: ", boxArray[i].m_body.GetTransform());
                 // console.log("Object [", i," ]: ", boxArray[i]);
                 // console.log(getBoxCoordinates(boxArray[i]));
-            }
+            // }
             // console.log("Box 0 contact list: ", boxArray[0].m_body.GetContactList());
             // console.log("getBodyList: ", world.GetBodyList());
             
@@ -200,7 +200,7 @@ window.onload = function () {
             // console.log('data length is ' + data.length);
 
             for (var i = 0; i < data.length; i++ ) {
-                console.log('am I doing all three? # ' + i + ', here is the x value: ' + data[i].x);
+                // console.log('am I doing all three? # ' + i + ', here is the x value: ' + data[i].x);
                 // draw images
                 enemyContext.save();
                 var enemyBoxWidth = data[i].w;

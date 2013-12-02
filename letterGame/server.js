@@ -58,9 +58,9 @@ io.sockets.on('connection', function(clientmessage) {
 
 	clientmessage.on('game data', function(data) {
 		// // let's just take a look at some of it
-		for (var i = 0; i < data.length; i++) {
-			util.log('Data for [' + i + ']: x: ' + data[i].x + ', y: ' + data[i].y + ', w: ' + data[i].w);
-		}
+		// for (var i = 0; i < data.length; i++) {
+		// 	util.log('Data for [' + i + ']: x: ' + data[i].x + ', y: ' + data[i].y + ', w: ' + data[i].w);
+		// }
 
 		// let's send it right back to the other player
 		clientmessage.broadcast.emit('enemy data', data);
