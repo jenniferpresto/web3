@@ -18,6 +18,11 @@ window.onload = function () {
     var enemyName; // this will be the name of the other player
     var playerNumber = 0; // this will be 1 or 2
 
+    var myBkgrdImage = new Image();
+    myBkgrdImage.src = '../imgs/myCanvas.png';
+    var enemyBkgrdImage = new Image();
+    enemyBkgrdImage.src = '../imgs/enemyCanvas.png';
+
     // var playerWantsRematch = false;
     var enemyWantsRematch = false;
 
@@ -238,6 +243,7 @@ window.onload = function () {
                 // enemyContext.drawImage(imageArray[i], -0.5 * data[i].w, -0.5 * data[i].h, data[i].w, data[i].h);
                 enemyContext.drawImage(imageArray[i], -0.5 * enemyBoxWidth, -0.5 * enemyBoxHeight, enemyBoxWidth, enemyBoxHeight);
                 enemyContext.restore();
+                enemyContext.drawImage(enemyBkgrdImage, 0, 0);
             }
         })
 
@@ -663,13 +669,13 @@ window.onload = function () {
         myContext.clearRect(0, 0, canvas1.width, canvas1.height);
 
         // draw the pedestal
-        myContext.beginPath();
-        myContext.rect(getBoxCoordinates(pedestal).x, getBoxCoordinates(pedestal).y, getBoxCoordinates(pedestal).width, getBoxCoordinates(pedestal).height);
-        myContext.fillStyle = 'yellow';
-        myContext.fill();
-        myContext.lineWidth = 1;
-        myContext.strokeStyle = 'black';
-        myContext.stroke();
+        // myContext.beginPath();
+        // myContext.rect(getBoxCoordinates(pedestal).x, getBoxCoordinates(pedestal).y, getBoxCoordinates(pedestal).width, getBoxCoordinates(pedestal).height);
+        // myContext.fillStyle = 'yellow';
+        // myContext.fill();
+        // myContext.lineWidth = 1;
+        // myContext.strokeStyle = 'black';
+        // myContext.stroke();
 
         // this will be an array of objects to go to the server
         var dataArray = [];
@@ -698,6 +704,8 @@ window.onload = function () {
 
             dataArray.push(boxData);
         }
+
+        myContext.drawImage(myBkgrdImage, 0, 0);
 
         // then send it
         socket.emit('game data', dataArray);
