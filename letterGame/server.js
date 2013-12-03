@@ -67,6 +67,15 @@ io.sockets.on('connection', function(clientmessage) {
 		clientmessage.broadcast.emit('you lose', number); // number not really even necessary
 	})
 
+	clientmessage.on('first rematch request', function() {
+		// send rematch message to the other player 
+		clientmessage.broadcast.emit('rematch requested');
+	})
+
+	clientmessage.on('rematch accepted', function() {
+		clientmessage.broadcast.emit('start new game');
+	})
+
 	// Below is a partial fix to a potential refresh problem;
 	// corrects if player 1 signs in, submits name, then refreshes before Player 2 submits his/her name
 	// Consider how to protect against mid-game refreshing once both players have signed in

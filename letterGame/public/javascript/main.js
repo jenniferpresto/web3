@@ -18,10 +18,12 @@ window.onload = function () {
     var enemyName; // this will be the name of the other player
     var playerNumber = 0; // this will be 1 or 2
 
+    // var playerWantsRematch = false;
+    var enemyWantsRematch = false;
+
     // booleans to determine whether game has started (may be unnecessary)
     var gameStarted = false;
     var checkRun = false;
-    // var gameWon = false;
     var gameOver = false;
 
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -143,9 +145,22 @@ window.onload = function () {
         gameOver = true;
     })
 
-    socket.on('right back at you', function(data) {
-        console.log(data);
+    socket.on('rematch requested', function () {
+        console.log('getting rematch request!');
+        enemyWantsRematch = true;
+        // if (playerWantsRematch) {
+        //     $('#endofgamebuttons').removeClass('hide');
+        //     $('#winstate').addClass('hide');
+        //     socket.emit('rematch accepted');
+        //     startRematch();
+        // }
     })
+
+    socket.on('start new game', function () {
+        console.log("it's on!");
+        startRematch();
+    })
+
 
 
     /*****************************
@@ -320,6 +335,55 @@ window.onload = function () {
 
         // then kick everything off
         requestAnimFrame(update);
+    }
+
+    // these listeners will be added when the end-of-game buttons are created
+    function addButtonListeners () {
+        $('button#rematch').click(function(event) {
+            event.preventDefault(event);
+            console.log('pressing the rematch button');
+            $('#endofgamebuttons').addClass('hide');
+            // playerWantsRematch = true; // if you press the button, you want a rematch
+            if (enemyWantsRematch) { // if your enemy has already requested it
+                socket.emit('rematch accepted');
+                startRematch();
+            } else {
+                socket.emit('first rematch request');
+            }
+        })
+    }
+
+    // functions for a rematch
+    function startRematch() {
+        console.log('startRematch function called');
+        gameOver = false;
+        // playerWantsRematch = false;
+        enemyWantsRematch = false;
+        $('#endofgamebuttons').removeClass('hide');
+        $('#winstate').addClass('hide');
+        resetBoxes();
+
+        // restart the animation
+        requestAnimFrame(update);
+    }
+
+    function resetBoxes() {
+        console.log('calling reset boxes');
+        for (var i = 0; i < boxArray.length; i++) {
+            var randWidth = Math.random() * 50 + 50;    // number btwn 50 and 100 
+            var randHeight = Math.random() * 50 + 50;   // number btwn 50 and 100
+            var randPosX = (Math.random() * (myCanvas.width - 50)) + 25; // give 25-pixel buffer on each side
+            var randPosY = Math.random() * myCanvas.height * 0.5; // top half of screen only
+            console.log(boxArray[i]);
+            console.log("m_body: ", boxArray[i].m_body);
+            // (not giving them any rotation)
+            var newPos = new b2Vec2(pixels(randPosX), pixels(randPosY));
+            boxArray[i].m_body.SetPosition(newPos);
+            boxArray[i].m_shape.SetAsBox (halfPixels(randWidth), halfPixels(randHeight)); // half-width, half-height
+            boxArray[i].m_body.SetAwake(true);
+
+            console.log(boxArray[i].m_body.GetPosition());
+        }
     }
 
     // functions for working with Box2D
@@ -510,13 +574,15 @@ window.onload = function () {
 
     // ending screens
     function drawLoseScreen() {
-        $('#winstate').html('<div class="endingwords">Sorry, ' + playerName + ',<br><br>' + enemyName + ' won that round</div>');
+        $('#winstate').html('<div class="endingwords">Sorry, ' + playerName + ',<br><br>' + enemyName + ' won that round<div id="endofgamebuttons"><button id="rematch">Rematch</button><button id="quit">No more</button></div></div>');
         $('#winstate').removeClass('hide');
+        addButtonListeners();
     }
 
     function drawWinScreen() {
-        $('#winstate').html('<div class="endingwords">Congratulations, ' + playerName + '!<br><br>You won that round!</div>');
+        $('#winstate').html('<div class="endingwords">Congratulations, ' + playerName + '!<br><br>You won that round!<div id="endofgamebuttons"><button id="rematch">Rematch</button><button id="quit">No more</button></div></div>');
         $('#winstate').removeClass('hide');
+        addButtonListeners();
     }
 
 
@@ -559,8 +625,6 @@ window.onload = function () {
                     socket.emit('i won', playerNumber);
                     drawWinScreen();
                     gameOver = true;            
-
-                    // gameWon = true;
                 }
                 checkRun = true;
             }
@@ -638,16 +702,6 @@ window.onload = function () {
         // then send it
         socket.emit('game data', dataArray);
 
-        // if (gameWon) {
-        //     // myContext.fillStyle = 'rgba(100, 100, 100, 0.5)';
-        //     // myContext.rect(0, 0, myCanvas.width, myCanvas.height);
-        //     // myContext.fill();
-        //     // myContext.fillStyle = 'black';
-        //     // myContext.lineWidth = 1;
-        //     // myContext.strokeText("You win!", myCanvas.width/2, myCanvas.height/2);
-        //     socket.emit('i won', playerNumber);
-        //     gameOver = true;            
-        // }
         if (!gameOver) {
             requestAnimFrame(update);
         }

@@ -57,9 +57,15 @@ canvas {
 }
 
 .endingwords {
-	/*text-align: center;*/
 	position: relative;
 	top: 30%;
 	color: white;
 	font-size: 150%;
 }
+
+#endofgamebuttons {
+	margin-top: 20px;
+}
+/*#rematch, #quit {
+	position: relative;
+}*/
