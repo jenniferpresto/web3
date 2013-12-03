@@ -297,7 +297,7 @@ window.onload = function () {
         pedestal.SetUserData("pedestal");
 
         // add randomly sized rectangles to the world
-        var NUMBOXES = 2;
+        var NUMBOXES = 4;
 
         bodyDef.type = b2Body.b2_dynamicBody;
         for (var i = 0; i < NUMBOXES; i++) {
