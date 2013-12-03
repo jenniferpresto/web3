@@ -23,7 +23,6 @@ window.onload = function () {
     var enemyBkgrdImage = new Image();
     enemyBkgrdImage.src = '../imgs/enemyCanvas.png';
 
-    // var playerWantsRematch = false;
     var enemyWantsRematch = false;
 
     // booleans to determine whether game has started (may be unnecessary)
@@ -166,6 +165,9 @@ window.onload = function () {
         startRematch();
     })
 
+    socket.on('your enemy quit', function () {
+        window.location.reload();
+    })
 
 
     /*****************************
@@ -357,6 +359,14 @@ window.onload = function () {
                 socket.emit('first rematch request');
             }
         })
+
+        $('button#quit').click(function(event) {
+            event.preventDefault(event);
+            console.log('quitting time');
+            socket.emit('i quit');
+            // startOver();
+            window.location.reload();
+        })
     }
 
     // functions for a rematch
@@ -391,6 +401,24 @@ window.onload = function () {
             console.log(boxArray[i].m_body.GetPosition());
         }
     }
+
+    // function startOver() {
+    //     gameOver = false;
+    //     playerName = ' ';
+    //     enemyName = ' ';
+    //     playerNumber = 0;
+    //     enemyWantsRematch = false;
+    //     gameStarted = false;
+    //     checkRun = false;
+    //     gameOver = false;
+
+    //     $('#playerform').removeClass('hide');
+    //     $('#endofgamebuttons').removeClass('hide');
+    //     $('#winstate').addClass('hide');
+
+    //     boxArray.length = 0;
+    //     imageArray.length = 0;
+    // }
 
     // functions for working with Box2D
     // short functions just to make conversion to b2d units a little less bulky

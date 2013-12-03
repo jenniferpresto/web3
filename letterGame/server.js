@@ -91,4 +91,12 @@ io.sockets.on('connection', function(clientmessage) {
 			}			
 		}
 	})
+
+	clientmessage.on('i quit', function() {
+		clientmessage.broadcast.emit('your enemy quit');
+		numPlayers = 0;
+		users.length = 0;
+		player1Name = ' ';
+		player2Name = ' ';
+	})
 })
