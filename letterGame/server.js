@@ -64,6 +64,10 @@ io.sockets.on('connection', function(clientmessage) {
 
 		// let's send it right back to the other player
 		clientmessage.broadcast.emit('enemy data', data);
+	})
 
+	clientmessage.on('i won', function(number) {
+		util.log('player ' + number + ' just won!');
+		clientmessage.broadcast.emit('you lose', number); // number not really even necessary
 	})
 })

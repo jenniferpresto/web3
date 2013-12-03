@@ -21,7 +21,8 @@ window.onload = function () {
     // booleans to determine whether game has started (may be unnecessary)
     var gameStarted = false;
     var checkRun = false;
-    var gameWon = false;
+    // var gameWon = false;
+    var gameOver = false;
 
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     // via http://blog.sethladd.com/2011/09/box2d-javascript-example-walkthrough.html
@@ -137,11 +138,17 @@ window.onload = function () {
         assignCanvasAndStart();
     })
 
+    socket.on('you lose', function() {
+        drawLoseScreen();
+        gameOver = true;
+    })
+
 
     /*****************************
     Defined functions
     *****************************/
 
+    // functions to set up the world once players are established
     function assignCanvasAndStart() {
         if (playerNumber == 1) {
             myCanvas = canvas1;
@@ -263,7 +270,7 @@ window.onload = function () {
         pedestal.SetUserData("pedestal");
 
         // add randomly sized rectangles to the world
-        var NUMBOXES = 3;
+        var NUMBOXES = 2;
 
         bodyDef.type = b2Body.b2_dynamicBody;
         for (var i = 0; i < NUMBOXES; i++) {
@@ -311,6 +318,7 @@ window.onload = function () {
         requestAnimFrame(update);
     }
 
+    // functions for working with Box2D
     // short functions just to make conversion to b2d units a little less bulky
     function pixels(pixels) {
         return pixels / SCALE;
@@ -341,7 +349,6 @@ window.onload = function () {
     }
 
     function getBodyCB (fixture) {
-
         if (fixture.GetBody().GetType() != b2Body.b2_staticBody) {
             if(fixture.GetShape().TestPoint(fixture.GetBody().GetTransform(), mouseVec)) {
                 selectedBody = fixture.GetBody();
@@ -497,6 +504,18 @@ window.onload = function () {
         }
     }
 
+    // ending screens
+    function drawLoseScreen() {
+        $('#winstate').html('<div class="endingwords">Sorry, ' + playerName + ',<br><br>' + enemyName + ' won that round</div>');
+        $('#winstate').removeClass('hide');
+    }
+
+    function drawWinScreen() {
+        $('#winstate').html('<div class="endingwords">Congratulations, ' + playerName + '!<br><br>You won that round!</div>');
+        $('#winstate').removeClass('hide');
+    }
+
+
     /*****************************
     Animation loop
     *****************************/
@@ -531,8 +550,13 @@ window.onload = function () {
 
             if (restingCount == boxArray.length) {
                 console.log("all at rest");
+                // if stacked correctly, you've won
                 if (checkStackingOrder()) {
-                    gameWon = true;
+                    socket.emit('i won', playerNumber);
+                    drawWinScreen();
+                    gameOver = true;            
+
+                    // gameWon = true;
                 }
                 checkRun = true;
             }
@@ -610,15 +634,17 @@ window.onload = function () {
         // then send it
         socket.emit('game data', dataArray);
 
-        if (gameWon) {
-            myContext.fillStyle = 'rgba(100, 100, 100, 0.5)';
-            myContext.rect(0, 0, myCanvas.width, myCanvas.height);
-            myContext.fill();
-            myContext.fillStyle = 'black';
-            myContext.lineWidth = 1;
-            myContext.strokeText("You win!", myCanvas.width/2, myCanvas.height/2);            
-        }
-        if (!gameWon) {
+        // if (gameWon) {
+        //     // myContext.fillStyle = 'rgba(100, 100, 100, 0.5)';
+        //     // myContext.rect(0, 0, myCanvas.width, myCanvas.height);
+        //     // myContext.fill();
+        //     // myContext.fillStyle = 'black';
+        //     // myContext.lineWidth = 1;
+        //     // myContext.strokeText("You win!", myCanvas.width/2, myCanvas.height/2);
+        //     socket.emit('i won', playerNumber);
+        //     gameOver = true;            
+        // }
+        if (!gameOver) {
             requestAnimFrame(update);
         }
     }
