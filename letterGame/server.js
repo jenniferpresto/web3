@@ -14,7 +14,7 @@ var io = require('socket.io').listen(app);
 var numPlayers = 0;
 var player1Name;
 var player2Name;
-var users = []; // useful?
+var users = []; // will store all user information
 
 io.set('log level', 2);
 io.sockets.on('connection', function(clientmessage) {
@@ -22,6 +22,7 @@ io.sockets.on('connection', function(clientmessage) {
 
 	// if Player 1 has already signed up by the time
 	// Player 2 connects, give Player 1's name to Player 2
+	// this also works if Player 1 hits refresh before Player 2 starts
 	if (numPlayers == 1) {
 		clientmessage.emit('player one assigned', users[0].name);
 	}
@@ -29,7 +30,7 @@ io.sockets.on('connection', function(clientmessage) {
 	// when one of the clients hits the button
 	clientmessage.on('player name', function(data) {
 		numPlayers++;
-		// save user information as an object; don't know if will be useful
+		// save user information as an object
 		users.push({number: numPlayers, id: clientmessage.id, name: data.name});
 		util.log('there are ' + numPlayers + ' users ready');
 		util.log(data.name + ' just pushed the button');
@@ -57,11 +58,6 @@ io.sockets.on('connection', function(clientmessage) {
 	})
 
 	clientmessage.on('game data', function(data) {
-		// // let's just take a look at some of it
-		// for (var i = 0; i < data.length; i++) {
-		// 	util.log('Data for [' + i + ']: x: ' + data[i].x + ', y: ' + data[i].y + ', w: ' + data[i].w);
-		// }
-
 		// let's send it right back to the other player
 		clientmessage.broadcast.emit('enemy data', data);
 	})
@@ -69,5 +65,21 @@ io.sockets.on('connection', function(clientmessage) {
 	clientmessage.on('i won', function(number) {
 		util.log('player ' + number + ' just won!');
 		clientmessage.broadcast.emit('you lose', number); // number not really even necessary
+	})
+
+	// Below is a partial fix to a potential refresh problem;
+	// corrects if player 1 signs in, submits name, then refreshes before Player 2 submits his/her name
+	// Consider how to protect against mid-game refreshing once both players have signed in
+	clientmessage.on('disconnect', function() {
+		// note: refresh disconnects that user then connects with another id
+		util.log('disconnecting ' + clientmessage.id + '!');
+		// if no one's pressed the button, no problem -- skip users.length == 0
+		if (users.length == 1) {
+			if (users[0].id == clientmessage.id) {
+				util.log('same one is disconnecting');
+				users.length = 0; // clear the users array
+				numPlayers = 0; // reset number of players to 0
+			}			
+		}
 	})
 })

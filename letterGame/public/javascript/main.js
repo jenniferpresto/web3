@@ -143,6 +143,10 @@ window.onload = function () {
         gameOver = true;
     })
 
+    socket.on('right back at you', function(data) {
+        console.log(data);
+    })
+
 
     /*****************************
     Defined functions
