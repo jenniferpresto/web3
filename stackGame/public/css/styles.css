@@ -1,5 +1,10 @@
+body {
+	background-color: #A49893;
+}
+
 #title {
 	text-align: center;
+	color: #000000;
 }
 
 #container {
@@ -15,7 +20,7 @@
 }
 
 canvas {
-	background-color: #333333;
+	background-color: #423F40;
 	border: 1px solid black;
 }
 
